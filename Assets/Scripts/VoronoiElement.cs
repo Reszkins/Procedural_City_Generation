@@ -1,0 +1,30 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class VoronoiElement
+{
+    public List<Vector3> points;
+    public Vector3 center;
+
+    public VoronoiElement(Vector3 c)
+    {
+        center = c;
+        points = new List<Vector3>();
+    }
+    public void AddPoint(Vector3 point)
+    {
+        bool flag = false;
+        for(int i = 0; i < points.Count; ++i)
+        {
+            if(points[i] == point)
+            {
+                flag = true;
+            }
+        }
+        if (!flag)
+        {
+            points.Add(point);
+        }
+    }
+}
