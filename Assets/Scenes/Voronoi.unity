@@ -156,9 +156,9 @@ MonoBehaviour:
   maxX: 5
   minY: -5
   maxY: 5
-  pointsNumber: 50
+  pointsNumber: 347
   deluanay: 0
-  lloyd: 0
+  lloyd: 5
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   roadTexture: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   deluanayTriangulation: {fileID: 837790375}

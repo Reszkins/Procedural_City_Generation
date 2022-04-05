@@ -19,9 +19,11 @@ public class VoronoiDiagram : MonoBehaviour
     {
         List<Vector3> points = new List<Vector3>();
         Vector3 newPoint;
-        Vector3 centerOfPoints = Vector3.zero;
+        Vector3 centerOfPoints; 
+        CalculateEdges();
         foreach (VoronoiElement voronoi in voronoi)
         {
+            centerOfPoints = Vector3.zero;
             for (int i = 0; i < voronoi.points.Count; ++i)
             {
                 centerOfPoints.x += voronoi.points[i].x;
@@ -69,15 +71,6 @@ public class VoronoiDiagram : MonoBehaviour
                     }
                 }
             }
-            //Debug.Log("NEW VORONOIELEMENT, punkt " + voronoi.center + " 'center': " + centerOfPoints);
-            if(voronoi.points.Count == 0)
-            {
-                Debug.Log("punkt: " + voronoi.center);
-            }
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                //Debug.Log(voronoi.points[i] + " ");
-            }
             float a = 0;
             float cx = 0;
             float cy = 0;
@@ -103,9 +96,6 @@ public class VoronoiDiagram : MonoBehaviour
             cy /= 6 * a;
             newPoint = new Vector3(cx,cy);
             points.Add(newPoint);
-            //DrawPoint(newPoint);
-            //Debug.Log(" nowy: " + newPoint);
-            //Debug.Log(voronoi.center + " centrum: " + centerOfPoints + " nowy: " + newPoint);
             GameManager.instance.points = points;
         }
     }
@@ -168,6 +158,52 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
     }
+    private void CalculateEdges()
+    {
+        bool topX, botX, topY, botY;
+        foreach(VoronoiElement voronoi in voronoi)
+        {
+            topX = false;
+            botX = false;
+            topY = false;
+            botY = false;
+            foreach(Vector3 point in voronoi.points)
+            {
+                if(point.x == 5f)
+                {
+                    topX = true;
+                }
+                if (point.x == -5f)
+                {
+                    botX = true;
+                }
+                if (point.y == 5f)
+                {
+                    topY = true;
+                }
+                if (point.y == -5f)
+                {
+                    botY = true;
+                }
+            }
+            if(topX && topY)
+            {
+                voronoi.points.Add(new Vector3(5, 5));
+            }
+            if (topX && botY)
+            {
+                voronoi.points.Add(new Vector3(5, -5));
+            }
+            if (botX && topY)
+            {
+                voronoi.points.Add(new Vector3(-5, 5));
+            }
+            if (botX && botY)
+            {
+                voronoi.points.Add(new Vector3(-5, -5));
+            }
+        }
+    }
     private void CalculateThirdLine(Triangle triangle)
     {
         if (Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5)
@@ -177,7 +213,7 @@ public class VoronoiDiagram : MonoBehaviour
         bool[] sharedEdges = {false,false,false};
         for(int i = 0; i < triangle.neighbours.Count; ++i)
         {
-            /*if(triangle.ab.first == triangle.neighbours[i].edge.first && triangle.ab.second == triangle.neighbours[i].edge.second ||
+            if(triangle.ab.first == triangle.neighbours[i].edge.first && triangle.ab.second == triangle.neighbours[i].edge.second ||
                 triangle.ab.second == triangle.neighbours[i].edge.first && triangle.ab.first == triangle.neighbours[i].edge.second)
             {
                 sharedEdges[0] = true;
@@ -189,33 +225,6 @@ public class VoronoiDiagram : MonoBehaviour
             }
             if (triangle.bc.first == triangle.neighbours[i].edge.first && triangle.bc.second == triangle.neighbours[i].edge.second ||
                 triangle.bc.second == triangle.neighbours[i].edge.first && triangle.bc.first == triangle.neighbours[i].edge.second)
-            {
-                sharedEdges[2] = true;
-            }*/
-            if ((triangle.ab.first == triangle.neighbours[i].triangle.ab.first && triangle.ab.second == triangle.neighbours[i].triangle.ab.second) ||
-                (triangle.ab.first == triangle.neighbours[i].triangle.ab.second && triangle.ab.second == triangle.neighbours[i].triangle.ab.first) ||
-                (triangle.ab.first == triangle.neighbours[i].triangle.ac.first && triangle.ab.second == triangle.neighbours[i].triangle.ac.second) ||
-                (triangle.ab.first == triangle.neighbours[i].triangle.ac.second && triangle.ab.second == triangle.neighbours[i].triangle.ac.first) ||
-                (triangle.ab.first == triangle.neighbours[i].triangle.bc.first && triangle.ab.second == triangle.neighbours[i].triangle.bc.second) ||
-                (triangle.ab.first == triangle.neighbours[i].triangle.bc.second && triangle.ab.second == triangle.neighbours[i].triangle.bc.first))
-            {
-                sharedEdges[0] = true;
-            }
-            if ((triangle.ac.first == triangle.neighbours[i].triangle.ab.first && triangle.ac.second == triangle.neighbours[i].triangle.ab.second) ||
-                (triangle.ac.first == triangle.neighbours[i].triangle.ab.second && triangle.ac.second == triangle.neighbours[i].triangle.ab.first) ||
-                (triangle.ac.first == triangle.neighbours[i].triangle.ac.first && triangle.ac.second == triangle.neighbours[i].triangle.ac.second) ||
-                (triangle.ac.first == triangle.neighbours[i].triangle.ac.second && triangle.ac.second == triangle.neighbours[i].triangle.ac.first) ||
-                (triangle.ac.first == triangle.neighbours[i].triangle.bc.first && triangle.ac.second == triangle.neighbours[i].triangle.bc.second) ||
-                (triangle.ac.first == triangle.neighbours[i].triangle.bc.second && triangle.ac.second == triangle.neighbours[i].triangle.bc.first))
-            {
-                sharedEdges[1] = true;
-            }
-            if ((triangle.bc.first == triangle.neighbours[i].triangle.ab.first && triangle.bc.second == triangle.neighbours[i].triangle.ab.second) ||
-                (triangle.bc.first == triangle.neighbours[i].triangle.ab.second && triangle.bc.second == triangle.neighbours[i].triangle.ab.first) ||
-                (triangle.bc.first == triangle.neighbours[i].triangle.ac.first && triangle.bc.second == triangle.neighbours[i].triangle.ac.second) ||
-                (triangle.bc.first == triangle.neighbours[i].triangle.ac.second && triangle.bc.second == triangle.neighbours[i].triangle.ac.first) ||
-                (triangle.bc.first == triangle.neighbours[i].triangle.bc.first && triangle.bc.second == triangle.neighbours[i].triangle.bc.second) ||
-                (triangle.bc.first == triangle.neighbours[i].triangle.bc.second && triangle.bc.second == triangle.neighbours[i].triangle.bc.first))
             {
                 sharedEdges[2] = true;
             }
@@ -381,9 +390,69 @@ public class VoronoiDiagram : MonoBehaviour
                 Vector3 newV = Vector3.zero;  
                 if ((Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5) && (Mathf.Abs(neighbour.triangle.center.x) > 5 || Mathf.Abs(neighbour.triangle.center.y) > 5))
                 {
-                    continue;
+                    if(Mathf.Abs(triangle.center.x) > 5 && Mathf.Abs(neighbour.triangle.center.x) > 5)
+                    {
+                        continue;
+                    }
+                    if(Mathf.Abs(triangle.center.y) > 5 && Mathf.Abs(neighbour.triangle.center.y) > 5)
+                    {
+                        continue;
+                    }
+                    bool flag = false;
+                    Vector3 firstPoint = triangle.center;
+                    Vector3 secondPoint = neighbour.triangle.center;
+                    vector = triangle.center - neighbour.triangle.center;
+                    if (Mathf.Abs(triangle.center.x) > 5)
+                    {
+                        distance = triangle.center.x > 0 ? 5 - neighbour.triangle.center.x : -5 - neighbour.triangle.center.x;
+                        if(Mathf.Abs(vector.y*(distance/vector.x)) <= 5)
+                        {
+                            flag = true;
+                            firstPoint.x = neighbour.triangle.center.x + distance;
+                            firstPoint.y = neighbour.triangle.center.y + (vector.y * (distance / vector.x));
+                        }
+                    }
+                    if (Mathf.Abs(triangle.center.y) > 5)
+                    {
+                        distance = triangle.center.y > 0 ? 5 - neighbour.triangle.center.y : -5 - neighbour.triangle.center.y;
+                        if (Mathf.Abs(vector.x * (distance / vector.y)) <= 5)
+                        {
+                            flag = true;
+                            firstPoint.x = neighbour.triangle.center.x + (vector.x * (distance / vector.y));
+                            firstPoint.y = neighbour.triangle.center.y + distance;
+                        }
+                    }
+                    vector = neighbour.triangle.center - triangle.center;
+                    if (Mathf.Abs(neighbour.triangle.center.x) > 5)
+                    {
+                        distance = neighbour.triangle.center.x > 0 ? 5 - triangle.center.x : -5 - triangle.center.x;
+                        if (Mathf.Abs(vector.y * (distance / vector.x)) <= 5)
+                        {
+                            flag = true;
+                            secondPoint.x = triangle.center.x + distance;
+                            secondPoint.y = triangle.center.y + (vector.y * (distance / vector.x));
+                        }
+                    }
+                    if (Mathf.Abs(neighbour.triangle.center.y) > 5)
+                    {
+                        distance = neighbour.triangle.center.y > 0 ? 5 - triangle.center.y : -5 - triangle.center.y;
+                        if (Mathf.Abs(vector.x * (distance / vector.y)) <= 5)
+                        {
+                            flag = true;
+                            secondPoint.x = triangle.center.x + (vector.x * (distance / vector.y));
+                            secondPoint.y = triangle.center.y + distance;
+                        }
+                    }
+                    if (flag)
+                    {
+                        DrawRoad(firstPoint, secondPoint, neighbour.edge);
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
-                if(Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5)
+                else if(Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5)
                 {
                     vector = triangle.center - neighbour.triangle.center;
                     if (Mathf.Abs(triangle.center.x) > 5)
