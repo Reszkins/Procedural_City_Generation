@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public float maxY = 5f;
     public int pointsNumber = 5;
     public bool deluanay;
+    public bool cityCenter;
     public int lloyd;
     public Sprite pointTexture;
     public Material roadTexture;
@@ -49,6 +50,12 @@ public class GameManager : MonoBehaviour
                 voronoiDiagram.Setup();
                 voronoiDiagram.Construct(triangles, points);
                 voronoiDiagram.CalculateNewPoints();
+                deluanayTriangulation.ResetData();
+                deluanayTriangulation.Deluanay();
+            }
+            if (cityCenter)
+            {
+                voronoiDiagram.ChooseCityCenterAndCalculateNewPoints();
                 deluanayTriangulation.ResetData();
                 deluanayTriangulation.Deluanay();
             }

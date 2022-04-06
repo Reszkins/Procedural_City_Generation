@@ -20,7 +20,7 @@ public class VoronoiDiagram : MonoBehaviour
         List<Vector3> points = new List<Vector3>();
         Vector3 newPoint;
         Vector3 centerOfPoints; 
-        CalculateEdges();
+        CalculateCorners();
         foreach (VoronoiElement voronoi in voronoi)
         {
             centerOfPoints = Vector3.zero;
@@ -99,6 +99,61 @@ public class VoronoiDiagram : MonoBehaviour
             GameManager.instance.points = points;
         }
     }
+    public void ChooseCityCenterAndCalculateNewPoints()
+    {
+        float mini = 50f;
+        int index = 0;
+        for (int i = 0; i < GameManager.instance.pointsNumber; ++i)
+        {
+            if(Mathf.Abs(GameManager.instance.points[i].x)+ Mathf.Abs(GameManager.instance.points[i].y) < mini)
+            {
+                index = i;
+                mini = Mathf.Abs(GameManager.instance.points[i].x) + Mathf.Abs(GameManager.instance.points[i].y);
+            }
+        }
+        //Vector3 cityCenter = GameManager.instance.points[Random.Range(0, GameManager.instance.pointsNumber - 1)];
+        Vector3 cityCenter = GameManager.instance.points[index];
+        Debug.Log(cityCenter);
+        Vector3 vector;
+        for(int i=0;i< GameManager.instance.pointsNumber; ++i)
+        {
+            if(GameManager.instance.points[i] != cityCenter)
+            {
+                vector = cityCenter - GameManager.instance.points[i];
+                vector = vector.normalized;
+                /*if (vector.magnitude > 6)
+                {
+                    vector *= 0.05f;
+                }
+                else if (vector.magnitude > 5)
+                {
+                    vector *= 0.1f;
+                }
+                else if (vector.magnitude > 4)
+                {
+                    vector *= 0.2f;
+                }
+                else if (vector.magnitude > 3)
+                {
+                    vector *= 0.3f;
+                }
+                else if (vector.magnitude > 2)
+                {
+                    vector *= 0.4f;
+                }
+                else if (vector.magnitude > 1)
+                {
+                    vector *= 0.5f;
+                }
+                else if (vector.magnitude < 1)
+                {
+                    vector *= 0.6f;
+                }*/
+                vector *= 0.4f;
+                GameManager.instance.points[i] = GameManager.instance.points[i] + vector;
+            }
+        }
+    }
     private void DrawPoint(Vector3 position)
     {
         GameObject go = new GameObject("point");
@@ -158,7 +213,7 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
     }
-    private void CalculateEdges()
+    private void CalculateCorners()
     {
         bool topX, botX, topY, botY;
         foreach(VoronoiElement voronoi in voronoi)
