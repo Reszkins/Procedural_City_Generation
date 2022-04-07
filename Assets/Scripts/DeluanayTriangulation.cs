@@ -61,11 +61,11 @@ public class DeluanayTriangulation : MonoBehaviour
     }
     private void DrawPoint(Vector3 position)
     {
-        GameObject go = new GameObject("point");
+        /*GameObject go = new GameObject("point");
         go.transform.position = position;
         var square = go.AddComponent<SpriteRenderer>();
         square.sprite = pointTexture;
-        square.transform.localScale = new Vector3(0.6f, 0.6f, 0);
+        square.transform.localScale = new Vector3(0.6f, 0.6f, 0);*/
     }
     private void CreateTriangle(Vector3 a, Vector3 b, Vector3 c)
     {

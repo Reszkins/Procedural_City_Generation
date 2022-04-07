@@ -9,6 +9,10 @@ public class VoronoiDiagram : MonoBehaviour
 
     private List<VoronoiElement> voronoi;
     public Sprite pointTexture;
+    public Sprite cityCenterTexture;
+    public Sprite officeDistrictTexture;
+    public Sprite residentialDistrictTexture;
+    public Sprite forestTexture;
 
     public void Setup()
     {
@@ -111,7 +115,6 @@ public class VoronoiDiagram : MonoBehaviour
                 mini = Mathf.Abs(GameManager.instance.points[i].x) + Mathf.Abs(GameManager.instance.points[i].y);
             }
         }
-        //Vector3 cityCenter = GameManager.instance.points[Random.Range(0, GameManager.instance.pointsNumber - 1)];
         Vector3 cityCenter = GameManager.instance.points[index];
         Debug.Log(cityCenter);
         Vector3 vector;
@@ -121,54 +124,86 @@ public class VoronoiDiagram : MonoBehaviour
             {
                 vector = cityCenter - GameManager.instance.points[i];
                 vector = vector.normalized;
-                /*if (vector.magnitude > 6)
-                {
-                    vector *= 0.05f;
-                }
-                else if (vector.magnitude > 5)
-                {
-                    vector *= 0.1f;
-                }
-                else if (vector.magnitude > 4)
-                {
-                    vector *= 0.2f;
-                }
-                else if (vector.magnitude > 3)
-                {
-                    vector *= 0.3f;
-                }
-                else if (vector.magnitude > 2)
-                {
-                    vector *= 0.4f;
-                }
-                else if (vector.magnitude > 1)
-                {
-                    vector *= 0.5f;
-                }
-                else if (vector.magnitude < 1)
-                {
-                    vector *= 0.6f;
-                }*/
                 vector *= 0.4f;
                 GameManager.instance.points[i] = GameManager.instance.points[i] + vector;
             }
         }
     }
-    private void DrawPoint(Vector3 position)
+    private void ChooseCityCenterAndCalculateDistrictClasses()
+    {
+        float mini = 50f;
+        int index = 0;
+        for (int i = 0; i < voronoi.Count; ++i)
+        {
+            if (Mathf.Abs(voronoi[i].center.x) + Mathf.Abs(voronoi[i].center.y) < mini)
+            {
+                index = i;
+                mini = Mathf.Abs(voronoi[i].center.x) + Mathf.Abs(voronoi[i].center.y);
+            }
+        }
+        Vector3 cityCenter = GameManager.instance.points[index];
+        Debug.Log(cityCenter);
+        Vector3 vector;
+        for (int i = 0; i < voronoi.Count; ++i)
+        {
+            if (voronoi[i].center != cityCenter)
+            {
+                vector = cityCenter - voronoi[i].center;
+                if (vector.magnitude > 5)
+                {
+                    voronoi[i].type = DistrictType.Forest;
+                }
+                else if (vector.magnitude > 2)
+                {
+                    voronoi[i].type = DistrictType.ResidentialDistrict;
+                }
+                else if (vector.magnitude < 2)
+                {
+                    voronoi[i].type = DistrictType.OfficeDistrict;
+                }
+            }
+            else
+            {
+                voronoi[i].type = DistrictType.CityCenter;
+            }
+        }
+    }
+    private void DrawPoint(VoronoiElement district)
     {
         GameObject go = new GameObject("point");
-        go.transform.position = position;
+        go.transform.position = district.center;
         var square = go.AddComponent<SpriteRenderer>();
-        square.sprite = pointTexture;
+        if(district.type == DistrictType.Default)
+        {
+            square.sprite = pointTexture;
+        }
+        else if(district.type == DistrictType.CityCenter)
+        {
+            square.sprite = cityCenterTexture;
+        }
+        else if (district.type == DistrictType.OfficeDistrict)
+        {
+            square.sprite = officeDistrictTexture;
+        }
+        else if (district.type == DistrictType.ResidentialDistrict)
+        {
+            square.sprite = residentialDistrictTexture;
+        }
+        else if (district.type == DistrictType.Forest)
+        {
+            square.sprite = forestTexture;
+        }
+
         square.transform.localScale = new Vector3(0.6f, 0.6f, 0);
     }
     public void ConstructAndDisplay(List<Triangle> triangulation, List<Vector3> points)
     {
         draw = true;
         Construct(triangulation, points);
-        for(int i = 0; i < points.Count; ++i)
+        if(GameManager.instance.cityCenter) ChooseCityCenterAndCalculateDistrictClasses();
+        for (int i = 0; i < voronoi.Count; ++i)
         {
-            DrawPoint(points[i]);
+            DrawPoint(voronoi[i]);
         }
     }
     public void Construct(List<Triangle> triangulation, List<Vector3> points)
@@ -212,6 +247,10 @@ public class VoronoiDiagram : MonoBehaviour
                 CalculateThirdLine(triangle);
             }
         }
+    }
+    public void GetDistricts()
+    {
+        GameManager.instance.districts = voronoi;
     }
     private void CalculateCorners()
     {

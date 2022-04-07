@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     public Sprite pointTexture;
     public Material roadTexture;
 
-
+    public Aglomeration aglomeration;
     public DeluanayTriangulation deluanayTriangulation;
     public VoronoiDiagram voronoiDiagram;
 
@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
     public List<Vector3> points = new List<Vector3>();
     [HideInInspector]
     public List<Triangle> triangles = new List<Triangle>();
+    [HideInInspector]
+    public List<VoronoiElement> districts = new List<VoronoiElement>();
 
     private void Update()
     {
@@ -43,7 +45,6 @@ public class GameManager : MonoBehaviour
             deluanayTriangulation.Setup();
             deluanayTriangulation.DrawPoints();
             deluanayTriangulation.Deluanay();
-            voronoiDiagram.Setup();
             while (lloyd > 0)
             {
                 lloyd--;
@@ -53,13 +54,10 @@ public class GameManager : MonoBehaviour
                 deluanayTriangulation.ResetData();
                 deluanayTriangulation.Deluanay();
             }
-            if (cityCenter)
-            {
-                voronoiDiagram.ChooseCityCenterAndCalculateNewPoints();
-                deluanayTriangulation.ResetData();
-                deluanayTriangulation.Deluanay();
-            }
+            voronoiDiagram.Setup();
             voronoiDiagram.ConstructAndDisplay(triangles, points);
+            voronoiDiagram.GetDistricts();
+            aglomeration.CreateRoads();
         }
     }
 }

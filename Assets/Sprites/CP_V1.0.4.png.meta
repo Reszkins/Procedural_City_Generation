@@ -11,6 +11,21 @@ TextureImporter:
   - first:
       213: -3672914969698219484
     second: point2
+  - first:
+      213: 6121683534337745368
+    second: Forest
+  - first:
+      213: 3777559525193862382
+    second: OfficeDistrict
+  - first:
+      213: 2481181708087501765
+    second: ResidentialArea
+  - first:
+      213: -493061890987620958
+    second: CP_V1.0.4_6
+  - first:
+      213: 5054403134209936823
+    second: CityCenter
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -162,7 +177,7 @@ TextureImporter:
         width: 6
         height: 6
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -170,6 +185,111 @@ TextureImporter:
       bones: []
       spriteID: 42a4ce48b4f270dc0800000000000000
       internalID: -3672914969698219484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Forest
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 749
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d12f8b8db694f450800000000000000
+      internalID: 6121683534337745368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OfficeDistrict
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 749
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eecc211bf569c6430800000000000000
+      internalID: 3777559525193862382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ResidentialArea
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 749
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c3a0cd1e9dee6220800000000000000
+      internalID: 2481181708087501765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CP_V1.0.4_6
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 520
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a5866f82da4829f0800000000000000
+      internalID: -493061890987620958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CityCenter
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 835
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bd44360fd8d42640800000000000000
+      internalID: 5054403134209936823
       vertices: []
       indices: 
       edges: []

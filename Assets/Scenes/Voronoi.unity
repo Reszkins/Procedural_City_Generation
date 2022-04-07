@@ -123,6 +123,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &236220668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 236220670}
+  - component: {fileID: 236220669}
+  m_Layer: 0
+  m_Name: Aglomeration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &236220669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 236220668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bad8b0fc26bee548a04807d183b0301, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadTexture: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!4 &236220670
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 236220668}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.023702143, y: -3.199934, z: -7.250746}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &329750348
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +206,7 @@ MonoBehaviour:
   lloyd: 10
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   roadTexture: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  aglomeration: {fileID: 236220669}
   deluanayTriangulation: {fileID: 837790375}
   voronoiDiagram: {fileID: 1948322271}
   points: []
@@ -383,6 +428,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointTexture: {fileID: -3672914969698219484, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
+  cityCenterTexture: {fileID: 5054403134209936823, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
+  officeDistrictTexture: {fileID: 3777559525193862382, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
+  residentialDistrictTexture: {fileID: 2481181708087501765, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
+  forestTexture: {fileID: 6121683534337745368, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
 --- !u!4 &1948322272
 Transform:
   m_ObjectHideFlags: 0
