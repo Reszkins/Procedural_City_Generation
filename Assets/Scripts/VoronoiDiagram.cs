@@ -75,6 +75,11 @@ public class VoronoiDiagram : MonoBehaviour
                     }
                 }
             }
+            /*Debug.Log("NEW DISTRICT");
+            for (int i = 0; i < voronoi.points.Count; ++i)
+            {
+                Debug.Log(voronoi.points[i]);
+            }*/
             float a = 0;
             float cx = 0;
             float cy = 0;
