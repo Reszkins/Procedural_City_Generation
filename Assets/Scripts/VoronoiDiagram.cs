@@ -147,7 +147,7 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
         Vector3 cityCenter = GameManager.instance.points[index];
-        Debug.Log(cityCenter);
+        //Debug.Log(cityCenter);
         Vector3 vector;
         for (int i = 0; i < voronoi.Count; ++i)
         {

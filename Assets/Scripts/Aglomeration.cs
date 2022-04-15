@@ -61,10 +61,23 @@ public class Aglomeration : MonoBehaviour
         Vector3 point;
         Area newArea;
         float distance;
+        bool vertical = false;
         while(current.area > maxArea / 5)
         {
             //Debug.Log("AREA: " + current.area + " max/7: " + maxArea / 5 + " maxarea: " + maxArea);
             line = current.lines[Random.Range(0, 3)];
+            while(line.vertical == vertical)
+            {
+                line = current.lines[Random.Range(0, 3)];
+            }
+            if (vertical)
+            {
+                vertical = false;
+            }
+            else
+            {
+                vertical = true;
+            }
             if (line.vertical)
             {
                 distance = line.secondPoint.y - line.firstPoint.y;
@@ -121,7 +134,7 @@ public class Aglomeration : MonoBehaviour
         //Debug.Log(":)");
         bool first, second;
         Vector3 cp;
-        //Debug.Log("NEW AREA  center: " + district.center);
+       // Debug.Log("NEW AREA  center: " + district.center);
         for(int i = 0; i < area.lines.Count; ++i)
         {
             //DrawRoad(area.lines[i].firstPoint, area.lines[i].secondPoint);
@@ -135,56 +148,62 @@ public class Aglomeration : MonoBehaviour
             }
             else if(first && !second)
             {
-                for(int j = 1; j < district.points.Count; ++j)
+                for(int j = 1; j < district.points.Count+1; ++j)
                 {
-                    cp = CrossPoint(area.lines[i].firstPoint, area.lines[i].secondPoint, district.points[j - 1], district.points[j]);
+                    cp = CrossPoint(area.lines[i].firstPoint, area.lines[i].secondPoint, district.points[j - 1], district.points[j % district.points.Count]);
                     if(cp.x != 1000 && cp.y != 1000)
                     {
                         DrawRoad(area.lines[i].firstPoint, cp);
+                        //Debug.Log("posz³o1");
                     } 
                 }
             }
             else if (!first && second)
             {
-                for (int j = 1; j < district.points.Count; ++j)
+                for (int j = 1; j < district.points.Count+1; ++j)
                 {
-                    cp = CrossPoint(area.lines[i].firstPoint, area.lines[i].secondPoint, district.points[j - 1], district.points[j]);
+                    cp = CrossPoint(area.lines[i].firstPoint, area.lines[i].secondPoint, district.points[j - 1], district.points[j % district.points.Count]);
                     if (cp.x != 1000 && cp.y != 1000)
                     {
                         DrawRoad(area.lines[i].secondPoint, cp);
+                        //Debug.Log("posz³o2");
                     }
                 }
             }
             else if (!first && !second)
             {
-                for (int j = 1; j < district.points.Count; ++j)
+                List<Vector3> points = CrossPoints(area.lines[i].firstPoint, area.lines[i].secondPoint, district.points);
+                if(points != null)
                 {
-                    List<Vector3> points = CrossPoints(area.lines[i].firstPoint, area.lines[i].secondPoint, district.points[j - 1], district.points[j]);
-                    if(points != null)
-                    {
-                        DrawRoad(points[0], points[1]);
-                    }
+                    DrawRoad(points[0], points[1]);
+                    //Debug.Log("posz³o3");
                 }
             }
         }
     }
-    private List<Vector3> CrossPoints(Vector3 p, Vector3 p2, Vector3 q, Vector3 q2)
+    private List<Vector3> CrossPoints(Vector3 p, Vector3 p2, List<Vector3> points)
     {
-        Vector3 r = p2 - p;
-        Vector3 s = q2 - q;
-        Vector3 o = q - p;
-        float t = (o.x * s.y - s.x * o.y) / (r.x * s.y - s.x * r.y);
-        float u = (o.x * r.y - r.x * o.y) / (r.x * s.y - s.x * r.y);
-        List<Vector3> points = new List<Vector3>();
-        if ((r.x * s.y - s.x * r.y) != 0 && 0 <= t && t <= 1 && 0 <= u && u <= 1)
+        List<Vector3> result = new List<Vector3>();
+        for(int i = 1; i < points.Count + 1; ++i)
         {
-            points.Add(p + t * r);
+            Vector3 q = points[i - 1];
+            Vector3 q2 = points[i % points.Count];
+            Vector3 r = p2 - p;
+            Vector3 s = q2 - q;
+            Vector3 o = q - p;
+            float t = (o.x * s.y - s.x * o.y) / (r.x * s.y - s.x * r.y);
+            float u = (o.x * r.y - r.x * o.y) / (r.x * s.y - s.x * r.y);
+            if ((r.x * s.y - s.x * r.y) != 0 && 0 <= t && t <= 1 && 0 <= u && u <= 1)
+            {
+                result.Add(p + t * r);
+            }
         }
-        if(points.Count != 2)
+        //Debug.Log(result.Count);
+        if(result.Count != 2)
         {
             return null;
         }
-        return points;
+        return result;
     }
     private Vector3 CrossPoint(Vector3 p, Vector3 p2, Vector3 q, Vector3 q2)
     {
@@ -251,7 +270,6 @@ public class Aglomeration : MonoBehaviour
         }
         return false;
     }
-
     private void PolarAngleSort()
     {
         Vector3 centerOfPoints;
@@ -307,7 +325,6 @@ public class Aglomeration : MonoBehaviour
             }
         }
     }
-
     private void CalculateCorners()
     {
         bool topX, botX, topY, botY;

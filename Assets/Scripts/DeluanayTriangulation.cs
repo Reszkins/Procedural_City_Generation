@@ -37,7 +37,7 @@ public class DeluanayTriangulation : MonoBehaviour
     }
     public void DrawPoints()
     {
-        Random.seed = 50;
+        //Random.seed = 50;
         for (int i = 0; i < pointsNumber; ++i)
         {
             CreatePoint(new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0));

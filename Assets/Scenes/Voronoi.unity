@@ -200,12 +200,12 @@ MonoBehaviour:
   maxX: 5
   minY: -5
   maxY: 5
-  pointsNumber: 347
+  pointsNumber: 500
   deluanay: 0
   cityCenter: 1
-  lloyd: 5
+  lloyd: 1
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
-  roadTexture: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  roadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
   aglomeration: {fileID: 236220669}
   deluanayTriangulation: {fileID: 837790375}
   voronoiDiagram: {fileID: 1948322271}
