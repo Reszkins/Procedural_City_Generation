@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class VoronoiDiagram : MonoBehaviour
-{
+{ 
+    public Material forestMaterial;
+    public Material cityMaterial;
     private Material roadTexture;
     private bool draw = false;
 
@@ -23,63 +25,8 @@ public class VoronoiDiagram : MonoBehaviour
     {
         List<Vector3> points = new List<Vector3>();
         Vector3 newPoint;
-        Vector3 centerOfPoints; 
-        CalculateCorners();
         foreach (VoronoiElement voronoi in voronoi)
         {
-            centerOfPoints = Vector3.zero;
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                centerOfPoints.x += voronoi.points[i].x;
-                centerOfPoints.y += voronoi.points[i].y;
-            }
-            centerOfPoints.x /= voronoi.points.Count;
-            centerOfPoints.y /= voronoi.points.Count;
-
-            List<float> alpha = new List<float>();
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                alpha.Add(0);
-            }
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                if (voronoi.points[i].x >= centerOfPoints.x && voronoi.points[i].y >= centerOfPoints.y)
-                {
-                    alpha[i] = (voronoi.points[i].y-centerOfPoints.y) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)));
-                }
-                else if (voronoi.points[i].x < centerOfPoints.x && voronoi.points[i].y >= centerOfPoints.y)
-                {
-                    alpha[i] = 2 - ((voronoi.points[i].y - centerOfPoints.y) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
-                }
-                else if (voronoi.points[i].x < centerOfPoints.x && voronoi.points[i].y < centerOfPoints.y)
-                {
-                    alpha[i] = 2 + (Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
-                }
-                else if (voronoi.points[i].x >= centerOfPoints.x && voronoi.points[i].y < centerOfPoints.y)
-                {
-                    alpha[i] = 4 - (Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
-                }
-            }
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                for (int j = 0; j < voronoi.points.Count - 1; ++j)
-                {
-                    if (alpha[j] > alpha[j + 1])
-                    {
-                        Vector3 tmp1 = voronoi.points[j];
-                        voronoi.points[j] = voronoi.points[j + 1];
-                        voronoi.points[j + 1] = tmp1;
-                        float tmp2 = alpha[j];
-                        alpha[j] = alpha[j + 1];
-                        alpha[j + 1] = tmp2;
-                    }
-                }
-            }
-            /*Debug.Log("NEW DISTRICT");
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                Debug.Log(voronoi.points[i]);
-            }*/
             float a = 0;
             float cx = 0;
             float cy = 0;
@@ -103,7 +50,16 @@ public class VoronoiDiagram : MonoBehaviour
                 - (voronoi.points[0].x * voronoi.points[voronoi.points.Count - 1].y));
             cx /= 6 * a;
             cy /= 6 * a;
+            if(cy > 5 || cx > 5)
+            {
+                Debug.Log(cy + " " + cx);
+            }
             newPoint = new Vector3(cx,cy);
+            if(voronoi.points.Count == 0)
+            {
+                Debug.Log("ZERO!!");
+                Debug.Log(voronoi.center);
+            }
             points.Add(newPoint);
             GameManager.instance.points = points;
         }
@@ -205,11 +161,11 @@ public class VoronoiDiagram : MonoBehaviour
     {
         draw = true;
         Construct(triangulation, points);
-        if(GameManager.instance.cityCenter) ChooseCityCenterAndCalculateDistrictClasses();
-        for (int i = 0; i < voronoi.Count; ++i)
+        //if(GameManager.instance.cityCenter) ChooseCityCenterAndCalculateDistrictClasses();
+        /*for (int i = 0; i < voronoi.Count; ++i)
         {
             DrawPoint(voronoi[i]);
-        }
+        }*/
     }
     public void Construct(List<Triangle> triangulation, List<Vector3> points)
     {
@@ -252,10 +208,53 @@ public class VoronoiDiagram : MonoBehaviour
                 CalculateThirdLine(triangle);
             }
         }
+        CalculateCorners();
+        PolarAngleSort();
+        if (GameManager.instance.cityCenter) ChooseCityCenterAndCalculateDistrictClasses();
+        if (draw)
+        {
+            CreateMeshes();
+        }
     }
     public void GetDistricts()
     {
         GameManager.instance.districts = voronoi;
+    }
+    private void CreateMeshes()
+    {
+        foreach(VoronoiElement voronoi in voronoi)
+        {
+            GameObject districtMesh = new GameObject("district");
+            var meshRenderer = districtMesh.AddComponent<MeshRenderer>();
+            var meshFilter = districtMesh.AddComponent<MeshFilter>();
+            Mesh mesh = new Mesh();
+            Vector3[] vertices = new Vector3[voronoi.points.Count + 1];
+            int[] triangles = new int[voronoi.points.Count * 3];
+            for(int i = 0; i < voronoi.points.Count; ++i)
+            {
+                vertices[i] = voronoi.points[i];
+            }
+            vertices[voronoi.points.Count] = voronoi.center;
+            int j = 0;
+            for(int i=1;i<voronoi.points.Count + 1; ++i)
+            {
+                triangles[j++] = i - 1;
+                triangles[j++] = i % voronoi.points.Count;
+                triangles[j++] = voronoi.points.Count;
+            }
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            meshFilter.mesh = mesh;
+            if(voronoi.type == DistrictType.Forest)
+            {
+                meshRenderer.material = forestMaterial;
+            }
+            else
+            {
+                meshRenderer.material = cityMaterial;
+            }
+            
+        }  
     }
     private void CalculateCorners()
     {
@@ -303,6 +302,61 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
     }
+    private void PolarAngleSort()
+    {
+        Vector3 centerOfPoints;
+        foreach (VoronoiElement voronoi in voronoi)
+        {
+            centerOfPoints = Vector3.zero;
+            for (int i = 0; i < voronoi.points.Count; ++i)
+            {
+                centerOfPoints.x += voronoi.points[i].x;
+                centerOfPoints.y += voronoi.points[i].y;
+            }
+            centerOfPoints.x /= voronoi.points.Count;
+            centerOfPoints.y /= voronoi.points.Count;
+
+            List<float> alpha = new List<float>();
+            for (int i = 0; i < voronoi.points.Count; ++i)
+            {
+                alpha.Add(0);
+            }
+            for (int i = 0; i < voronoi.points.Count; ++i)
+            {
+                if (voronoi.points[i].x >= centerOfPoints.x && voronoi.points[i].y >= centerOfPoints.y)
+                {
+                    alpha[i] = (voronoi.points[i].y - centerOfPoints.y) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)));
+                }
+                else if (voronoi.points[i].x < centerOfPoints.x && voronoi.points[i].y >= centerOfPoints.y)
+                {
+                    alpha[i] = 2 - ((voronoi.points[i].y - centerOfPoints.y) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
+                }
+                else if (voronoi.points[i].x < centerOfPoints.x && voronoi.points[i].y < centerOfPoints.y)
+                {
+                    alpha[i] = 2 + (Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
+                }
+                else if (voronoi.points[i].x >= centerOfPoints.x && voronoi.points[i].y < centerOfPoints.y)
+                {
+                    alpha[i] = 4 - (Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
+                }
+            }
+            for (int i = 0; i < voronoi.points.Count; ++i)
+            {
+                for (int j = 0; j < voronoi.points.Count - 1; ++j)
+                {
+                    if (alpha[j] > alpha[j + 1])
+                    {
+                        Vector3 tmp1 = voronoi.points[j];
+                        voronoi.points[j] = voronoi.points[j + 1];
+                        voronoi.points[j + 1] = tmp1;
+                        float tmp2 = alpha[j];
+                        alpha[j] = alpha[j + 1];
+                        alpha[j + 1] = tmp2;
+                    }
+                }
+            }
+        }
+}
     private void CalculateThirdLine(Triangle triangle)
     {
         if (Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5)

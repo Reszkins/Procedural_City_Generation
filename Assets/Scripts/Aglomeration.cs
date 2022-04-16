@@ -8,11 +8,7 @@ public class Aglomeration : MonoBehaviour
     private List<VoronoiElement> districts = new List<VoronoiElement>();
     public void CreateRoads()
     {
-        
-        //Debug.Log("elos");
         districts = GameManager.instance.districts;
-        CalculateCorners();
-        PolarAngleSort();
         foreach(VoronoiElement district in districts)
         {
             if(district.type == DistrictType.Forest)
@@ -23,11 +19,6 @@ public class Aglomeration : MonoBehaviour
             float minX = 6;
             float maxY = -6;
             float minY = 6;
-        /*Debug.Log("NEW DISTRICT");
-        for(int i = 0; i < district.points.Count; ++i)
-        {
-            Debug.Log(district.points[i]);
-        }*/
             foreach(Vector3 point in district.points)
             {
                 if(point.x > maxX)
@@ -269,107 +260,6 @@ public class Aglomeration : MonoBehaviour
             return true;
         }
         return false;
-    }
-    private void PolarAngleSort()
-    {
-        Vector3 centerOfPoints;
-        foreach (VoronoiElement voronoi in districts)
-        {
-            centerOfPoints = Vector3.zero;
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                centerOfPoints.x += voronoi.points[i].x;
-                centerOfPoints.y += voronoi.points[i].y;
-            }
-            centerOfPoints.x /= voronoi.points.Count;
-            centerOfPoints.y /= voronoi.points.Count;
-
-            List<float> alpha = new List<float>();
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                alpha.Add(0);
-            }
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                if (voronoi.points[i].x >= centerOfPoints.x && voronoi.points[i].y >= centerOfPoints.y)
-                {
-                    alpha[i] = (voronoi.points[i].y - centerOfPoints.y) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)));
-                }
-                else if (voronoi.points[i].x < centerOfPoints.x && voronoi.points[i].y >= centerOfPoints.y)
-                {
-                    alpha[i] = 2 - ((voronoi.points[i].y - centerOfPoints.y) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
-                }
-                else if (voronoi.points[i].x < centerOfPoints.x && voronoi.points[i].y < centerOfPoints.y)
-                {
-                    alpha[i] = 2 + (Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
-                }
-                else if (voronoi.points[i].x >= centerOfPoints.x && voronoi.points[i].y < centerOfPoints.y)
-                {
-                    alpha[i] = 4 - (Mathf.Abs((voronoi.points[i].y - centerOfPoints.y)) / (Mathf.Abs(voronoi.points[i].x - centerOfPoints.x) + Mathf.Abs((voronoi.points[i].y - centerOfPoints.y))));
-                }
-            }
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                for (int j = 0; j < voronoi.points.Count - 1; ++j)
-                {
-                    if (alpha[j] > alpha[j + 1])
-                    {
-                        Vector3 tmp1 = voronoi.points[j];
-                        voronoi.points[j] = voronoi.points[j + 1];
-                        voronoi.points[j + 1] = tmp1;
-                        float tmp2 = alpha[j];
-                        alpha[j] = alpha[j + 1];
-                        alpha[j + 1] = tmp2;
-                    }
-                }
-            }
-        }
-    }
-    private void CalculateCorners()
-    {
-        bool topX, botX, topY, botY;
-        foreach (VoronoiElement voronoi in districts)
-        {
-            topX = false;
-            botX = false;
-            topY = false;
-            botY = false;
-            foreach (Vector3 point in voronoi.points)
-            {
-                if (point.x == 5f)
-                {
-                    topX = true;
-                }
-                if (point.x == -5f)
-                {
-                    botX = true;
-                }
-                if (point.y == 5f)
-                {
-                    topY = true;
-                }
-                if (point.y == -5f)
-                {
-                    botY = true;
-                }
-            }
-            if (topX && topY)
-            {
-                voronoi.points.Add(new Vector3(5, 5));
-            }
-            if (topX && botY)
-            {
-                voronoi.points.Add(new Vector3(5, -5));
-            }
-            if (botX && topY)
-            {
-                voronoi.points.Add(new Vector3(-5, 5));
-            }
-            if (botX && botY)
-            {
-                voronoi.points.Add(new Vector3(-5, -5));
-            }
-        }
     }
     private void DrawRoad(Vector3 a, Vector3 b)
     {

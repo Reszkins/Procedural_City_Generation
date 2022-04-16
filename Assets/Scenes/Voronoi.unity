@@ -200,10 +200,10 @@ MonoBehaviour:
   maxX: 5
   minY: -5
   maxY: 5
-  pointsNumber: 500
+  pointsNumber: 200
   deluanay: 0
   cityCenter: 1
-  lloyd: 1
+  lloyd: 6
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   roadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
   aglomeration: {fileID: 236220669}
@@ -427,6 +427,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10fad9abec3ed4b439399adb61a81e6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  forestMaterial: {fileID: 2100000, guid: 9f53b75e7e8bdbf448e5ee6d0cc286dd, type: 2}
+  cityMaterial: {fileID: 2100000, guid: 5f732379072165742899a3f7d74beec3, type: 2}
   pointTexture: {fileID: -3672914969698219484, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   cityCenterTexture: {fileID: 5054403134209936823, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   officeDistrictTexture: {fileID: 3777559525193862382, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
