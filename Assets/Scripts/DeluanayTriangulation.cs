@@ -17,7 +17,7 @@ public class DeluanayTriangulation : MonoBehaviour
     private List<Vector3> points = new List<Vector3>();
     private List<Triangle> triangles = new List<Triangle>();
 
-    private Material roadTexture;
+    public Material roadTexture;
 
     public void Setup()
     {
@@ -28,7 +28,7 @@ public class DeluanayTriangulation : MonoBehaviour
         this.pointsNumber = GameManager.instance.pointsNumber;
         this.deluanay = GameManager.instance.deluanay;
         this.pointTexture = GameManager.instance.pointTexture;
-        this.roadTexture = GameManager.instance.roadTexture;
+        //this.roadTexture = GameManager.instance.roadTexture;
     }
     public void ResetData()
     {
@@ -37,7 +37,7 @@ public class DeluanayTriangulation : MonoBehaviour
     }
     public void DrawPoints()
     {
-        //Random.seed = 50;
+        //Random.seed = -1793400948;
         for (int i = 0; i < pointsNumber; ++i)
         {
             CreatePoint(new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0));
@@ -124,8 +124,9 @@ public class DeluanayTriangulation : MonoBehaviour
         List<Triangle> badTriangles = new List<Triangle>();
         List<Edge> polygon = new List<Edge>();
         List<Edge> badEdges = new List<Edge>();
-        Triangle superTriangle = new Triangle(new Vector3(0, 20, 0), new Vector3(-20, -10, 0), new Vector3(20, -10, 0));
+        Triangle superTriangle = new Triangle(new Vector3(0, 100, 0), new Vector3(100, -50, 0), new Vector3(-100, -50, 0));
         CalculateCenterAndRadius(superTriangle);
+        //DrawTriangle(superTriangle);
 
         triangulation.Add(superTriangle);
         int n = 0;

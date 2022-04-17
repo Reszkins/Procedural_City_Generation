@@ -16,10 +16,10 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
-    public float minX = -5f;
-    public float maxX = 5f;
-    public float minY = -5f;
-    public float maxY = 5f;
+    public float minX;
+    public float maxX;
+    public float minY;
+    public float maxY;
     public int pointsNumber = 5;
     public bool deluanay;
     public bool cityCenter;
@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public Aglomeration aglomeration;
     public DeluanayTriangulation deluanayTriangulation;
     public VoronoiDiagram voronoiDiagram;
+    public CityArea cityArea;
 
     [HideInInspector]
     public List<Vector3> points = new List<Vector3>();
@@ -41,7 +42,9 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown("space"))
-        {
+        {   
+            CalculateLimits();
+            cityArea.DrawArea();
             deluanayTriangulation.Setup();
             deluanayTriangulation.DrawPoints();
             deluanayTriangulation.Deluanay();
@@ -59,5 +62,14 @@ public class GameManager : MonoBehaviour
             voronoiDiagram.GetDistricts();
             aglomeration.CreateRoads();
         }
+    }
+    private void CalculateLimits()
+    {
+        minX = Mathf.Sqrt(pointsNumber) * -1;
+        minY = Mathf.Sqrt(pointsNumber) * -1;
+        maxX = Mathf.Sqrt(pointsNumber);
+        maxY = Mathf.Sqrt(pointsNumber);
+
+        Debug.Log("minX " + minX + " maxX " + maxX + " minY " + minY + " maxY " + maxY);
     }
 }

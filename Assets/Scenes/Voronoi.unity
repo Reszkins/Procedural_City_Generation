@@ -200,15 +200,16 @@ MonoBehaviour:
   maxX: 5
   minY: -5
   maxY: 5
-  pointsNumber: 200
+  pointsNumber: 529
   deluanay: 0
   cityCenter: 1
-  lloyd: 6
+  lloyd: 0
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   roadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
   aglomeration: {fileID: 236220669}
   deluanayTriangulation: {fileID: 837790375}
   voronoiDiagram: {fileID: 1948322271}
+  cityArea: {fileID: 1062727143}
   points: []
 --- !u!4 &329750350
 Transform:
@@ -267,6 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5efecf90a7c7bf54f9591a31ca4972e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roadTexture: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &983289047
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,10 +395,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 541b14e86ef29274d8c8c0dbb62e8c95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxX: 5
-  minX: -5
-  maxY: 5
-  minY: -5
   borderTexture: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &1948322270
 GameObject:

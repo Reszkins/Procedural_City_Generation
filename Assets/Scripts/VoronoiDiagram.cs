@@ -50,49 +50,24 @@ public class VoronoiDiagram : MonoBehaviour
                 - (voronoi.points[0].x * voronoi.points[voronoi.points.Count - 1].y));
             cx /= 6 * a;
             cy /= 6 * a;
-            if(cy > 5 || cx > 5)
+            if(cy > GameManager.instance.maxY || cx > GameManager.instance.maxX)
             {
                 Debug.Log(cy + " " + cx);
             }
             newPoint = new Vector3(cx,cy);
             if(voronoi.points.Count == 0)
             {
-                Debug.Log("ZERO!!");
+                int seed = Random.seed;
+                Debug.Log("ZERO!! " + seed);
                 Debug.Log(voronoi.center);
             }
             points.Add(newPoint);
             GameManager.instance.points = points;
         }
     }
-    public void ChooseCityCenterAndCalculateNewPoints()
-    {
-        float mini = 50f;
-        int index = 0;
-        for (int i = 0; i < GameManager.instance.pointsNumber; ++i)
-        {
-            if(Mathf.Abs(GameManager.instance.points[i].x)+ Mathf.Abs(GameManager.instance.points[i].y) < mini)
-            {
-                index = i;
-                mini = Mathf.Abs(GameManager.instance.points[i].x) + Mathf.Abs(GameManager.instance.points[i].y);
-            }
-        }
-        Vector3 cityCenter = GameManager.instance.points[index];
-        Debug.Log(cityCenter);
-        Vector3 vector;
-        for(int i=0;i< GameManager.instance.pointsNumber; ++i)
-        {
-            if(GameManager.instance.points[i] != cityCenter)
-            {
-                vector = cityCenter - GameManager.instance.points[i];
-                vector = vector.normalized;
-                vector *= 0.4f;
-                GameManager.instance.points[i] = GameManager.instance.points[i] + vector;
-            }
-        }
-    }
     private void ChooseCityCenterAndCalculateDistrictClasses()
     {
-        float mini = 50f;
+        float mini = float.MaxValue;
         int index = 0;
         for (int i = 0; i < voronoi.Count; ++i)
         {
@@ -110,15 +85,15 @@ public class VoronoiDiagram : MonoBehaviour
             if (voronoi[i].center != cityCenter)
             {
                 vector = cityCenter - voronoi[i].center;
-                if (vector.magnitude > 5)
+                if (vector.magnitude > GameManager.instance.maxX * 0.85f)
                 {
                     voronoi[i].type = DistrictType.Forest;
                 }
-                else if (vector.magnitude > 2)
+                else if (vector.magnitude > GameManager.instance.maxX * 0.4f)
                 {
                     voronoi[i].type = DistrictType.ResidentialDistrict;
                 }
-                else if (vector.magnitude < 2)
+                else if (vector.magnitude < GameManager.instance.maxX * 0.4f)
                 {
                     voronoi[i].type = DistrictType.OfficeDistrict;
                 }
@@ -267,38 +242,38 @@ public class VoronoiDiagram : MonoBehaviour
             botY = false;
             foreach(Vector3 point in voronoi.points)
             {
-                if(point.x == 5f)
+                if(point.x == GameManager.instance.maxX)
                 {
                     topX = true;
                 }
-                if (point.x == -5f)
+                if (point.x == GameManager.instance.minX)
                 {
                     botX = true;
                 }
-                if (point.y == 5f)
+                if (point.y == GameManager.instance.maxY)
                 {
                     topY = true;
                 }
-                if (point.y == -5f)
+                if (point.y == GameManager.instance.minY)
                 {
                     botY = true;
                 }
             }
             if(topX && topY)
             {
-                voronoi.points.Add(new Vector3(5, 5));
+                voronoi.points.Add(new Vector3(GameManager.instance.maxX, GameManager.instance.maxY));
             }
             if (topX && botY)
             {
-                voronoi.points.Add(new Vector3(5, -5));
+                voronoi.points.Add(new Vector3(GameManager.instance.maxX, GameManager.instance.minY));
             }
             if (botX && topY)
             {
-                voronoi.points.Add(new Vector3(-5, 5));
+                voronoi.points.Add(new Vector3(GameManager.instance.minX, GameManager.instance.maxY));
             }
             if (botX && botY)
             {
-                voronoi.points.Add(new Vector3(-5, -5));
+                voronoi.points.Add(new Vector3(GameManager.instance.minX, GameManager.instance.minY));
             }
         }
     }
@@ -307,15 +282,17 @@ public class VoronoiDiagram : MonoBehaviour
         Vector3 centerOfPoints;
         foreach (VoronoiElement voronoi in voronoi)
         {
-            centerOfPoints = Vector3.zero;
+            /*centerOfPoints = Vector3.zero;
             for (int i = 0; i < voronoi.points.Count; ++i)
             {
                 centerOfPoints.x += voronoi.points[i].x;
                 centerOfPoints.y += voronoi.points[i].y;
             }
             centerOfPoints.x /= voronoi.points.Count;
-            centerOfPoints.y /= voronoi.points.Count;
+            centerOfPoints.y /= voronoi.points.Count;*/
 
+            centerOfPoints = voronoi.center;
+            
             List<float> alpha = new List<float>();
             for (int i = 0; i < voronoi.points.Count; ++i)
             {
@@ -359,7 +336,7 @@ public class VoronoiDiagram : MonoBehaviour
 }
     private void CalculateThirdLine(Triangle triangle)
     {
-        if (Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5)
+        if (Mathf.Abs(triangle.center.x) > GameManager.instance.maxX || Mathf.Abs(triangle.center.y) > GameManager.instance.maxY)
         {
             return;
         }
@@ -390,7 +367,7 @@ public class VoronoiDiagram : MonoBehaviour
             perpendicularVector.x = -vector.y;
             perpendicularVector.y = vector.x;
 
-            while(Vector3.Magnitude(perpendicularVector) < 10.0f)
+            while(Vector3.Magnitude(perpendicularVector) < GameManager.instance.maxX * 2)
             {
                 perpendicularVector *= 2.0f;
             }
@@ -401,32 +378,31 @@ public class VoronoiDiagram : MonoBehaviour
             }
             float distance;
             Vector3 tmp;
-            if (triangle.center.x + perpendicularVector.x > 5)
+            if (triangle.center.x + perpendicularVector.x > GameManager.instance.maxX)
             {
-                distance = 5 - triangle.center.x;
+                distance = GameManager.instance.maxX - triangle.center.x;
                 tmp = new Vector3(distance, perpendicularVector.y * (distance / perpendicularVector.x));
                 perpendicularVector = tmp;
             }
-            if (triangle.center.y + perpendicularVector.y > 5)
+            if (triangle.center.y + perpendicularVector.y > GameManager.instance.maxY)
             {
-                distance = 5 - triangle.center.y;
+                distance = GameManager.instance.maxY - triangle.center.y;
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y),distance);
                 perpendicularVector = tmp;
             }
-            if (triangle.center.x + perpendicularVector.x < -5)
+            if (triangle.center.x + perpendicularVector.x < GameManager.instance.minX)
             {
-                distance = - 5 - triangle.center.x;
+                distance = GameManager.instance.minX - triangle.center.x;
                 tmp = new Vector3(distance, perpendicularVector.y * (distance / perpendicularVector.x));
                 perpendicularVector = tmp;
             } 
-            if (triangle.center.y + perpendicularVector.y < -5)
+            if (triangle.center.y + perpendicularVector.y < GameManager.instance.minY)
             {
-                distance = - 5 - triangle.center.y;
+                distance = GameManager.instance.minY - triangle.center.y;
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
             DrawRoad(triangle.center, triangle.center + perpendicularVector, triangle.ab);
-
         }
         if (!sharedEdges[1])
         {
@@ -434,7 +410,7 @@ public class VoronoiDiagram : MonoBehaviour
             perpendicularVector.x = -vector.y;
             perpendicularVector.y = vector.x;
 
-            while (Vector3.Magnitude(perpendicularVector) < 10.0f)
+            while (Vector3.Magnitude(perpendicularVector) < GameManager.instance.maxX * 2)
             {
                 perpendicularVector *= 2.0f;
             }
@@ -445,27 +421,27 @@ public class VoronoiDiagram : MonoBehaviour
             }
             float distance;
             Vector3 tmp;
-            if (triangle.center.x + perpendicularVector.x > 5)
+            if (triangle.center.x + perpendicularVector.x > GameManager.instance.maxX)
             {
-                distance = 5 - triangle.center.x;
+                distance = GameManager.instance.maxX - triangle.center.x;
                 tmp = new Vector3(distance, perpendicularVector.y * (distance / perpendicularVector.x));
                 perpendicularVector = tmp;
             }
-            if (triangle.center.y + perpendicularVector.y > 5)
+            if (triangle.center.y + perpendicularVector.y > GameManager.instance.maxY)
             {
-                distance = 5 - triangle.center.y;
+                distance = GameManager.instance.maxY - triangle.center.y;
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
-            if (triangle.center.x + perpendicularVector.x < -5)
+            if (triangle.center.x + perpendicularVector.x < GameManager.instance.minX)
             {
-                distance = -5 - triangle.center.x;
+                distance = GameManager.instance.minX - triangle.center.x;
                 tmp = new Vector3(distance, perpendicularVector.y * (distance / perpendicularVector.x));
                 perpendicularVector = tmp;
             }
-            if (triangle.center.y + perpendicularVector.y < -5)
+            if (triangle.center.y + perpendicularVector.y < GameManager.instance.minY)
             {
-                distance = -5 - triangle.center.y;
+                distance = GameManager.instance.minY - triangle.center.y;
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
@@ -477,7 +453,7 @@ public class VoronoiDiagram : MonoBehaviour
             perpendicularVector.x = -vector.y;
             perpendicularVector.y = vector.x;
 
-            while (Vector3.Magnitude(perpendicularVector) < 10.0f)
+            while (Vector3.Magnitude(perpendicularVector) < GameManager.instance.maxX * 2)
             {
                 perpendicularVector *= 2.0f;
             }
@@ -488,27 +464,27 @@ public class VoronoiDiagram : MonoBehaviour
             }
             float distance;
             Vector3 tmp;
-            if (triangle.center.x + perpendicularVector.x > 5)
+            if (triangle.center.x + perpendicularVector.x > GameManager.instance.maxX)
             {
-                distance = 5 - triangle.center.x;
+                distance = GameManager.instance.maxX - triangle.center.x;
                 tmp = new Vector3(distance, perpendicularVector.y * (distance / perpendicularVector.x));
                 perpendicularVector = tmp;
             }
-            if (triangle.center.y + perpendicularVector.y > 5)
+            if (triangle.center.y + perpendicularVector.y > GameManager.instance.maxY)
             {
-                distance = 5 - triangle.center.y;
+                distance = GameManager.instance.maxY - triangle.center.y;
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
-            if (triangle.center.x + perpendicularVector.x < -5)
+            if (triangle.center.x + perpendicularVector.x < GameManager.instance.minX)
             {
-                distance = -5 - triangle.center.x;
+                distance = GameManager.instance.minX - triangle.center.x;
                 tmp = new Vector3(distance, perpendicularVector.y * (distance / perpendicularVector.x));
                 perpendicularVector = tmp;
             }
-            if (triangle.center.y + perpendicularVector.y < -5)
+            if (triangle.center.y + perpendicularVector.y < GameManager.instance.minY)
             {
-                distance = -5 - triangle.center.y;
+                distance = GameManager.instance.minY - triangle.center.y;
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
@@ -541,13 +517,14 @@ public class VoronoiDiagram : MonoBehaviour
                 float distance;
                 Vector3 vector = Vector3.zero;
                 Vector3 newV = Vector3.zero;  
-                if ((Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5) && (Mathf.Abs(neighbour.triangle.center.x) > 5 || Mathf.Abs(neighbour.triangle.center.y) > 5))
+                if ((Mathf.Abs(triangle.center.x) > GameManager.instance.maxX || Mathf.Abs(triangle.center.y) > GameManager.instance.maxY) && 
+                    (Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX || Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY))
                 {
-                    if(Mathf.Abs(triangle.center.x) > 5 && Mathf.Abs(neighbour.triangle.center.x) > 5)
+                    if(Mathf.Abs(triangle.center.x) > GameManager.instance.maxX && Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX)
                     {
                         continue;
                     }
-                    if(Mathf.Abs(triangle.center.y) > 5 && Mathf.Abs(neighbour.triangle.center.y) > 5)
+                    if(Mathf.Abs(triangle.center.y) > GameManager.instance.maxY && Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY)
                     {
                         continue;
                     }
@@ -555,20 +532,20 @@ public class VoronoiDiagram : MonoBehaviour
                     Vector3 firstPoint = triangle.center;
                     Vector3 secondPoint = neighbour.triangle.center;
                     vector = triangle.center - neighbour.triangle.center;
-                    if (Mathf.Abs(triangle.center.x) > 5)
+                    if (Mathf.Abs(triangle.center.x) > GameManager.instance.maxX)
                     {
-                        distance = triangle.center.x > 0 ? 5 - neighbour.triangle.center.x : -5 - neighbour.triangle.center.x;
-                        if(Mathf.Abs(vector.y*(distance/vector.x)) <= 5)
+                        distance = triangle.center.x > 0 ? GameManager.instance.maxX - neighbour.triangle.center.x : GameManager.instance.minX - neighbour.triangle.center.x;
+                        if(Mathf.Abs(vector.y*(distance/vector.x)) <= GameManager.instance.maxX)
                         {
                             flag = true;
                             firstPoint.x = neighbour.triangle.center.x + distance;
                             firstPoint.y = neighbour.triangle.center.y + (vector.y * (distance / vector.x));
                         }
                     }
-                    if (Mathf.Abs(triangle.center.y) > 5)
+                    if (Mathf.Abs(triangle.center.y) > GameManager.instance.maxY)
                     {
-                        distance = triangle.center.y > 0 ? 5 - neighbour.triangle.center.y : -5 - neighbour.triangle.center.y;
-                        if (Mathf.Abs(vector.x * (distance / vector.y)) <= 5)
+                        distance = triangle.center.y > 0 ? GameManager.instance.maxY - neighbour.triangle.center.y : GameManager.instance.minY - neighbour.triangle.center.y;
+                        if (Mathf.Abs(vector.x * (distance / vector.y)) <= GameManager.instance.maxY)
                         {
                             flag = true;
                             firstPoint.x = neighbour.triangle.center.x + (vector.x * (distance / vector.y));
@@ -576,20 +553,20 @@ public class VoronoiDiagram : MonoBehaviour
                         }
                     }
                     vector = neighbour.triangle.center - triangle.center;
-                    if (Mathf.Abs(neighbour.triangle.center.x) > 5)
+                    if (Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX)
                     {
-                        distance = neighbour.triangle.center.x > 0 ? 5 - triangle.center.x : -5 - triangle.center.x;
-                        if (Mathf.Abs(vector.y * (distance / vector.x)) <= 5)
+                        distance = neighbour.triangle.center.x > 0 ? GameManager.instance.maxX - triangle.center.x : GameManager.instance.minX - triangle.center.x;
+                        if (Mathf.Abs(vector.y * (distance / vector.x)) <= GameManager.instance.maxX)
                         {
                             flag = true;
                             secondPoint.x = triangle.center.x + distance;
                             secondPoint.y = triangle.center.y + (vector.y * (distance / vector.x));
                         }
                     }
-                    if (Mathf.Abs(neighbour.triangle.center.y) > 5)
+                    if (Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY)
                     {
-                        distance = neighbour.triangle.center.y > 0 ? 5 - triangle.center.y : -5 - triangle.center.y;
-                        if (Mathf.Abs(vector.x * (distance / vector.y)) <= 5)
+                        distance = neighbour.triangle.center.y > 0 ? GameManager.instance.maxY - triangle.center.y : GameManager.instance.minY - triangle.center.y;
+                        if (Mathf.Abs(vector.x * (distance / vector.y)) <= GameManager.instance.maxY)
                         {
                             flag = true;
                             secondPoint.x = triangle.center.x + (vector.x * (distance / vector.y));
@@ -605,32 +582,32 @@ public class VoronoiDiagram : MonoBehaviour
                         continue;
                     }
                 }
-                else if(Mathf.Abs(triangle.center.x) > 5 || Mathf.Abs(triangle.center.y) > 5)
+                else if(Mathf.Abs(triangle.center.x) > GameManager.instance.maxX || Mathf.Abs(triangle.center.y) > GameManager.instance.maxY)
                 {
                     vector = triangle.center - neighbour.triangle.center;
-                    if (Mathf.Abs(triangle.center.x) > 5)
+                    if (Mathf.Abs(triangle.center.x) > GameManager.instance.maxX)
                     {
-                        distance = triangle.center.x > 0 ? 5 - neighbour.triangle.center.x : -5 - neighbour.triangle.center.x;
+                        distance = triangle.center.x > 0 ? GameManager.instance.maxX - neighbour.triangle.center.x : GameManager.instance.minX - neighbour.triangle.center.x;
                         newV = new Vector3(distance, vector.y * (distance/vector.x));
                     }
-                    if (Mathf.Abs(triangle.center.y) > 5)
+                    if (Mathf.Abs(triangle.center.y) > GameManager.instance.maxY)
                     {
-                        distance = triangle.center.y > 0 ? 5 - neighbour.triangle.center.y : -5 - neighbour.triangle.center.y;
+                        distance = triangle.center.y > 0 ? GameManager.instance.maxY - neighbour.triangle.center.y : GameManager.instance.minY - neighbour.triangle.center.y;
                         newV = new Vector3(vector.x * (distance / vector.y), distance);
                     }
                     DrawRoad(neighbour.triangle.center + newV, neighbour.triangle.center, neighbour.edge);
                 }
-                else if (Mathf.Abs(neighbour.triangle.center.x) > 5 || Mathf.Abs(neighbour.triangle.center.y) > 5)
+                else if (Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX || Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY)
                 {
                     vector = neighbour.triangle.center - triangle.center;
-                    if (Mathf.Abs(neighbour.triangle.center.x) > 5)
+                    if (Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX)
                     {
-                        distance = neighbour.triangle.center.x > 0 ? 5 - triangle.center.x : -5 - triangle.center.x;
+                        distance = neighbour.triangle.center.x > 0 ? GameManager.instance.maxX - triangle.center.x : GameManager.instance.minX - triangle.center.x;
                         newV = new Vector3(distance, vector.y * (distance / vector.x));
                     }
-                    if (Mathf.Abs(neighbour.triangle.center.y) > 5)
+                    if (Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY)
                     {
-                        distance = neighbour.triangle.center.y > 0 ? 5 - triangle.center.y : -5 - triangle.center.y;
+                        distance = neighbour.triangle.center.y > 0 ? GameManager.instance.maxY - triangle.center.y : GameManager.instance.minY - triangle.center.y;
                         newV = new Vector3(vector.x * (distance / vector.y), distance);
                     }
                     DrawRoad(triangle.center + newV, triangle.center, neighbour.edge);

@@ -15,10 +15,10 @@ public class Aglomeration : MonoBehaviour
             {
                 continue;
             }
-            float maxX = -6;
-            float minX = 6;
-            float maxY = -6;
-            float minY = 6;
+            float maxX = float.MinValue;
+            float minX = float.MaxValue;
+            float maxY = float.MinValue;
+            float minY = float.MaxValue;
             foreach(Vector3 point in district.points)
             {
                 if(point.x > maxX)
