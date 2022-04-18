@@ -514,6 +514,8 @@ public class VoronoiDiagram : MonoBehaviour
         {
             foreach(Neighbour neighbour in triangle.neighbours)
             {
+                float distanceX = 0f;
+                float distanceY = 0f;
                 float distance;
                 Vector3 vector = Vector3.zero;
                 Vector3 newV = Vector3.zero;  
@@ -587,13 +589,14 @@ public class VoronoiDiagram : MonoBehaviour
                     vector = triangle.center - neighbour.triangle.center;
                     if (Mathf.Abs(triangle.center.x) > GameManager.instance.maxX)
                     {
-                        distance = triangle.center.x > 0 ? GameManager.instance.maxX - neighbour.triangle.center.x : GameManager.instance.minX - neighbour.triangle.center.x;
-                        newV = new Vector3(distance, vector.y * (distance/vector.x));
+                        distanceX = triangle.center.x > 0 ? GameManager.instance.maxX - neighbour.triangle.center.x : GameManager.instance.minX - neighbour.triangle.center.x;
+                        newV = new Vector3(distanceX, vector.y * (distanceX/vector.x));
+                        vector = newV;
                     }
-                    if (Mathf.Abs(triangle.center.y) > GameManager.instance.maxY)
+                    if (Mathf.Abs(triangle.center.y) > GameManager.instance.maxY && Mathf.Abs(neighbour.triangle.center.y + vector.y) > GameManager.instance.maxY)
                     {
-                        distance = triangle.center.y > 0 ? GameManager.instance.maxY - neighbour.triangle.center.y : GameManager.instance.minY - neighbour.triangle.center.y;
-                        newV = new Vector3(vector.x * (distance / vector.y), distance);
+                        distanceY = triangle.center.y > 0 ? GameManager.instance.maxY - neighbour.triangle.center.y : GameManager.instance.minY - neighbour.triangle.center.y;
+                        newV = new Vector3(vector.x * (distanceY / vector.y), distanceY);
                     }
                     DrawRoad(neighbour.triangle.center + newV, neighbour.triangle.center, neighbour.edge);
                 }
@@ -602,13 +605,14 @@ public class VoronoiDiagram : MonoBehaviour
                     vector = neighbour.triangle.center - triangle.center;
                     if (Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX)
                     {
-                        distance = neighbour.triangle.center.x > 0 ? GameManager.instance.maxX - triangle.center.x : GameManager.instance.minX - triangle.center.x;
-                        newV = new Vector3(distance, vector.y * (distance / vector.x));
+                        distanceX = neighbour.triangle.center.x > 0 ? GameManager.instance.maxX - triangle.center.x : GameManager.instance.minX - triangle.center.x;
+                        newV = new Vector3(distanceX, vector.y * (distanceX / vector.x));
+                        vector = newV;
                     }
-                    if (Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY)
+                    if (Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY && Mathf.Abs(triangle.center.y + vector.y) > GameManager.instance.maxY)
                     {
-                        distance = neighbour.triangle.center.y > 0 ? GameManager.instance.maxY - triangle.center.y : GameManager.instance.minY - triangle.center.y;
-                        newV = new Vector3(vector.x * (distance / vector.y), distance);
+                        distanceY = neighbour.triangle.center.y > 0 ? GameManager.instance.maxY - triangle.center.y : GameManager.instance.minY - triangle.center.y;
+                        newV = new Vector3(vector.x * (distanceY / vector.y), distanceY);
                     }
                     DrawRoad(triangle.center + newV, triangle.center, neighbour.edge);
                 } 
