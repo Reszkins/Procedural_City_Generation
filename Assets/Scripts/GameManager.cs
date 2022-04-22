@@ -26,6 +26,9 @@ public class GameManager : MonoBehaviour
     public int lloyd;
     public Sprite pointTexture;
     public Material roadTexture;
+    public Sprite[] buildingTextures32x32 = new Sprite[9];
+    public Sprite[] buildingTextures16x16 = new Sprite[8];
+    public Sprite[] buildingTextures16x32 = new Sprite[4];
 
     public Aglomeration aglomeration;
     public DeluanayTriangulation deluanayTriangulation;
@@ -61,6 +64,7 @@ public class GameManager : MonoBehaviour
             voronoiDiagram.ConstructAndDisplay(triangles, points);
             voronoiDiagram.GetDistricts();
             aglomeration.CreateRoads();
+            aglomeration.CreateBuildings();
         }
     }
     private void CalculateLimits()

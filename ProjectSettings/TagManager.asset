@@ -3,9 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - building
-  - road
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -42,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Road
+    uniqueID: 4228438189
+    locked: 0
+  - name: Main Road
+    uniqueID: 2665688273
+    locked: 0
+  - name: Building
+    uniqueID: 3480439883
     locked: 0

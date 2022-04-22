@@ -6,6 +6,9 @@ public class Aglomeration : MonoBehaviour
 {
     public Material roadTexture;
     private List<VoronoiElement> districts = new List<VoronoiElement>();
+    private List<Area> areas = new List<Area>();
+    private List<VoronoiElement> areaDistrict = new List<VoronoiElement>();
+    private Sprite[] buildingTextures16x16 = new Sprite[8];
     public void CreateRoads()
     {
         districts = GameManager.instance.districts;
@@ -53,9 +56,11 @@ public class Aglomeration : MonoBehaviour
         Area newArea;
         float distance;
         bool vertical = false;
-        while(current.area > maxArea / 5)
+        bool flag = false;
+        while(current.area > maxArea / 5f)
         {
             //Debug.Log("AREA: " + current.area + " max/7: " + maxArea / 5 + " maxarea: " + maxArea);
+            flag = false;
             line = current.lines[Random.Range(0, 3)];
             while(line.vertical == vertical)
             {
@@ -80,12 +85,36 @@ public class Aglomeration : MonoBehaviour
                         if(current.lines[i].firstPoint.x == point.x)
                         {
                             newArea = new Area(current.lines[i].firstPoint, point, new Vector3(current.lines[i].secondPoint.x,point.y), current.lines[i].secondPoint);
-                            pq.Add(newArea);
+                            foreach(Line l in newArea.lines)
+                            {
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                {
+                                    pq.Add(current);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag)
+                            {
+                                pq.Add(newArea);
+                            }       
                         }
                         else
                         {
                             newArea = new Area(current.lines[i].secondPoint, point, new Vector3(current.lines[i].firstPoint.x, point.y), current.lines[i].firstPoint);
-                            pq.Add(newArea);
+                            foreach (Line l in newArea.lines)
+                            {
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                {
+                                    pq.Add(current);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag)
+                            {
+                                pq.Add(newArea);
+                            }
                         }
                     }
                 }
@@ -101,12 +130,36 @@ public class Aglomeration : MonoBehaviour
                         if (current.lines[i].firstPoint.y == point.y)
                         {
                             newArea = new Area(current.lines[i].firstPoint, point, new Vector3(point.x, current.lines[i].secondPoint.y), current.lines[i].secondPoint);
-                            pq.Add(newArea);
+                            foreach (Line l in newArea.lines)
+                            {
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                {
+                                    pq.Add(current);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag)
+                            {
+                                pq.Add(newArea);
+                            }
                         }
                         else
                         {
                             newArea = new Area(current.lines[i].secondPoint, point, new Vector3(point.x, current.lines[i].firstPoint.y), current.lines[i].firstPoint);
-                            pq.Add(newArea);
+                            foreach (Line l in newArea.lines)
+                            {
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                {
+                                    pq.Add(current);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag)
+                            {
+                                pq.Add(newArea);
+                            }
                         }
                     }
                 }
@@ -117,7 +170,10 @@ public class Aglomeration : MonoBehaviour
 
         while (!pq.Empty())
         {
-            CalculateLine(pq.Get(),district);
+            Area topArea = pq.Get();
+            areas.Add(topArea);
+            areaDistrict.Add(district);
+            CalculateLine(topArea,district);
         }
     }
     private void CalculateLine(Area area,VoronoiElement district)
@@ -263,7 +319,7 @@ public class Aglomeration : MonoBehaviour
     }
     private void DrawRoad(Vector3 a, Vector3 b)
     {
-        GameObject road = new GameObject("road");
+        GameObject road = new GameObject("Road");
         road = RoadSetup(road, a, b);
     }
     private GameObject RoadSetup(GameObject go, Vector3 a, Vector3 b)
@@ -277,7 +333,83 @@ public class Aglomeration : MonoBehaviour
         line.textureMode = LineTextureMode.Tile;
         line.startWidth = 0.02f;
         line.endWidth = 0.02f;
+        line.sortingLayerName = "Road";
 
         return go;
+    }
+    public void CreateBuildings()
+    {
+        buildingTextures16x16 = GameManager.instance.buildingTextures16x16;
+        Debug.Log("ILOŒÆ AREA: " + areas.Count);
+        for(int i = 0; i < areas.Count; ++i)
+        {
+            CalculateBuildings(areas[i],areaDistrict[i]);
+        }
+    }
+    private void CalculateBuildings(Area area, VoronoiElement district)
+    {
+        float xMax = float.MinValue;
+        float xMin = float.MaxValue;
+        float yMax = float.MinValue;
+        float yMin = float.MaxValue;
+
+        foreach(Line l in area.lines)
+        {
+            if(l.firstPoint.x > xMax)
+            {
+                xMax = l.firstPoint.x;
+            }
+            if (l.firstPoint.x < xMin)
+            {
+                xMin = l.firstPoint.x;
+            }
+            if (l.firstPoint.y > yMax)
+            {
+                yMax = l.firstPoint.y;
+            }
+            if (l.firstPoint.y < yMin)
+            {
+                yMin = l.firstPoint.y;
+            }
+        }
+        int q = (int)((yMax - yMin) / 0.172f);
+        float diff = xMax - xMin;
+        float qX = (int)((xMax - xMin) / 0.172f);
+        if (q == 0) return;
+        float m = (yMax - yMin) / q;
+        float currentY = yMax - m/2;
+        if (diff < 0.172) return;
+        float mX = (xMax - xMin) / qX;
+        float currentX = xMin + mX/2;
+        for (int i = 0; i < q; ++i)
+        {
+            for(int j = 0; j < qX; ++j)
+            {
+                if(Sorient(new Vector3(currentX, currentY), district))
+                {
+                    DrawBuilding(new Vector3(currentX, currentY));
+                }
+                currentX = currentX + mX;
+            }
+            currentY = currentY - m;
+            currentX = xMin + mX/2;
+        }
+    }
+    private void DrawBuilding(Vector3 position)
+    {
+        GameObject building = new GameObject("Building");
+        building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
+    }
+    private GameObject BuildingSetup(GameObject building,Vector3 position, Sprite texture)
+    {
+        building.transform.position = position;
+        var sprite = building.AddComponent<SpriteRenderer>();
+        sprite.sprite = texture;
+        sprite.sortingLayerName = "Building";
+        var coll = building.AddComponent<BoxCollider2D>();
+        var collDetecter = building.AddComponent<CollisionDetecter>();
+        collDetecter.SetParameters(coll, building);
+        collDetecter.CheckCollision();
+        return building;
     }
 }

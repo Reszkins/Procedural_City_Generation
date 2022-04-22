@@ -640,7 +640,7 @@ public class VoronoiDiagram : MonoBehaviour
         }
         if (draw)
         {
-            GameObject road = new GameObject("road");
+            GameObject road = new GameObject("Main Road");
             road = RoadSetup(road, a, b);
         }
     }
@@ -655,6 +655,13 @@ public class VoronoiDiagram : MonoBehaviour
         line.textureMode = LineTextureMode.Tile;
         line.startWidth = 0.05f;
         line.endWidth = 0.05f;
+        line.sortingLayerName = "Main Road";
+
+        var coll = go.AddComponent<EdgeCollider2D>();
+        var pts = new Vector2[2];
+        pts[0] = a;
+        pts[1] = b;
+        coll.points = pts;
 
         return go;
     }
