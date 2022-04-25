@@ -74,6 +74,8 @@ public class Aglomeration : MonoBehaviour
             {
                 vertical = true;
             }
+            List<Area> toAdd = new List<Area>();
+            bool add = true;
             if (line.vertical)
             {
                 distance = line.secondPoint.y - line.firstPoint.y;
@@ -87,16 +89,18 @@ public class Aglomeration : MonoBehaviour
                             newArea = new Area(current.lines[i].firstPoint, point, new Vector3(current.lines[i].secondPoint.x,point.y), current.lines[i].secondPoint);
                             foreach(Line l in newArea.lines)
                             {
-                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
                                     pq.Add(current);
                                     flag = true;
+                                    add = false;
                                     break;
                                 }
                             }
                             if (!flag)
                             {
-                                pq.Add(newArea);
+                                toAdd.Add(newArea);
+                                //pq.Add(newArea);
                             }       
                         }
                         else
@@ -104,16 +108,18 @@ public class Aglomeration : MonoBehaviour
                             newArea = new Area(current.lines[i].secondPoint, point, new Vector3(current.lines[i].firstPoint.x, point.y), current.lines[i].firstPoint);
                             foreach (Line l in newArea.lines)
                             {
-                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
                                     pq.Add(current);
                                     flag = true;
+                                    add = false;
                                     break;
                                 }
                             }
                             if (!flag)
                             {
-                                pq.Add(newArea);
+                                toAdd.Add(newArea);
+                                //pq.Add(newArea);
                             }
                         }
                     }
@@ -132,16 +138,18 @@ public class Aglomeration : MonoBehaviour
                             newArea = new Area(current.lines[i].firstPoint, point, new Vector3(point.x, current.lines[i].secondPoint.y), current.lines[i].secondPoint);
                             foreach (Line l in newArea.lines)
                             {
-                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
                                     pq.Add(current);
                                     flag = true;
+                                    add = false;
                                     break;
                                 }
                             }
                             if (!flag)
                             {
-                                pq.Add(newArea);
+                                toAdd.Add(newArea);
+                                //pq.Add(newArea);
                             }
                         }
                         else
@@ -149,19 +157,29 @@ public class Aglomeration : MonoBehaviour
                             newArea = new Area(current.lines[i].secondPoint, point, new Vector3(point.x, current.lines[i].firstPoint.y), current.lines[i].firstPoint);
                             foreach (Line l in newArea.lines)
                             {
-                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.165f)
+                                if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
                                     pq.Add(current);
                                     flag = true;
+                                    add = false;
                                     break;
                                 }
                             }
                             if (!flag)
                             {
-                                pq.Add(newArea);
+                                toAdd.Add(newArea);
+                                //pq.Add(newArea);
                             }
                         }
                     }
+                }
+            }
+            if (add)
+            {
+                while(toAdd.Count != 0)
+                {
+                    pq.Add(toAdd[0]);
+                    toAdd.RemoveAt(0);
                 }
             }
             current = pq.Get();
@@ -410,6 +428,27 @@ public class Aglomeration : MonoBehaviour
         var collDetecter = building.AddComponent<CollisionDetecter>();
         collDetecter.SetParameters(coll, building);
         collDetecter.CheckCollision();
+        int number = Random.Range(1, 1000);
+        if(number % 4 == 0)
+        {
+            sprite.flipX = false;
+            sprite.flipY = false;
+        }
+        else if(number % 4 == 1)
+        {
+            sprite.flipX = true;
+            sprite.flipY = false;
+        }
+        else if (number % 4 == 2)
+        {
+            sprite.flipX = false;
+            sprite.flipY = true;
+        }
+        else if (number % 4 == 3)
+        {
+            sprite.flipX = true;
+            sprite.flipY = true;
+        }
         return building;
     }
 }

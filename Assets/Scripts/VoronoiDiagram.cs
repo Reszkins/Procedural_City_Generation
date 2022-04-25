@@ -89,6 +89,18 @@ public class VoronoiDiagram : MonoBehaviour
                 {
                     voronoi[i].type = DistrictType.Forest;
                 }
+                else if (vector.magnitude > GameManager.instance.maxX * 0.7f)
+                {
+                    int number = Random.Range(1, 1000);
+                    if(number % 2 == 1)
+                    {
+                        voronoi[i].type = DistrictType.ResidentialDistrict;
+                    }
+                    else
+                    {
+                        voronoi[i].type = DistrictType.Forest;
+                    }
+                }
                 else if (vector.magnitude > GameManager.instance.maxX * 0.4f)
                 {
                     voronoi[i].type = DistrictType.ResidentialDistrict;

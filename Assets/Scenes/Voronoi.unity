@@ -203,7 +203,7 @@ MonoBehaviour:
   pointsNumber: 347
   deluanay: 0
   cityCenter: 1
-  lloyd: 6
+  lloyd: 9
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   roadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
   buildingTextures32x32:
