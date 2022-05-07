@@ -10,12 +10,6 @@ public class PriorityQueue
     {
         pq.Add(a);
         pq.Sort((x, y) => y.area.CompareTo(x.area));
-        //Debug.Log("POSORTOWANE: ");
-        //for(int i = 0; i < pq.Count; ++i)
-        //{
-        //    Debug.Log(pq[i].area);
-        //}
-        //Debug.Log("KONIEC ");
     }
     public Area Get()
     {

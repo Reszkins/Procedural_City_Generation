@@ -14,12 +14,16 @@ public class VoronoiElement
     public List<Vector3> points;
     public Vector3 center;
     public DistrictType type;
+    public List<VoronoiElement> neighbours;
+    public bool border;
 
     public VoronoiElement(Vector3 c)
     {
         center = c;
         points = new List<Vector3>();
         type = DistrictType.Default;
+        neighbours = new List<VoronoiElement>();
+        border = false;
     }
     public void AddPoint(Vector3 point)
     {
@@ -35,5 +39,11 @@ public class VoronoiElement
         {
             points.Add(point);
         }
+    }
+
+    public void AddNeighbour(VoronoiElement neighbour)
+    {
+        //Debug.Log(neighbour);
+        neighbours.Add(neighbour);
     }
 }

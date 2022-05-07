@@ -123,6 +123,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &7225084
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7225086}
+  - component: {fileID: 7225085}
+  m_Layer: 0
+  m_Name: MainRoadGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &7225085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7225084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67b5ec72c08f63143b64dc7091560d92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
+--- !u!4 &7225086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7225084}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.6904657, y: -2.6611664, z: -42.325623}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &236220668
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,12 +244,11 @@ MonoBehaviour:
   maxX: 5
   minY: -5
   maxY: 5
-  pointsNumber: 347
+  pointsNumber: 169
   deluanay: 0
-  cityCenter: 1
   lloyd: 9
   pointTexture: {fileID: 2776858760641423503, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
-  roadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
+  roadTexture: {fileID: 2100000, guid: 5b240a1795501bc4fba60b5720de5287, type: 2}
   buildingTextures32x32:
   - {fileID: 0}
   - {fileID: 0}
@@ -230,10 +273,12 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  cityCenter: {x: 0, y: 0, z: 0}
   aglomeration: {fileID: 236220669}
   deluanayTriangulation: {fileID: 837790375}
   voronoiDiagram: {fileID: 1948322271}
   cityArea: {fileID: 1062727143}
+  mainRoadGenerator: {fileID: 7225085}
   points: []
 --- !u!4 &329750350
 Transform:
@@ -451,6 +496,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   forestMaterial: {fileID: 2100000, guid: 9f53b75e7e8bdbf448e5ee6d0cc286dd, type: 2}
   cityMaterial: {fileID: 2100000, guid: 5f732379072165742899a3f7d74beec3, type: 2}
+  roadTexture: {fileID: 2100000, guid: 5b240a1795501bc4fba60b5720de5287, type: 2}
+  mainRoadTexture: {fileID: 2100000, guid: 5b91ecd8f33dbca49acf71b5578a777d, type: 2}
   pointTexture: {fileID: -3672914969698219484, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   cityCenterTexture: {fileID: 5054403134209936823, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}
   officeDistrictTexture: {fileID: 3777559525193862382, guid: 5c336ecb85d3f304ab600df2cb8d2d2b, type: 3}

@@ -27,7 +27,7 @@ public class DeluanayTriangulation : MonoBehaviour
         this.maxY = GameManager.instance.maxY;
         this.pointsNumber = GameManager.instance.pointsNumber;
         this.deluanay = GameManager.instance.deluanay;
-        this.pointTexture = GameManager.instance.pointTexture;
+        //this.pointTexture = GameManager.instance.pointTexture;
         //this.roadTexture = GameManager.instance.roadTexture;
     }
     public void ResetData()

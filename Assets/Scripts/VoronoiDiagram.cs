@@ -6,7 +6,8 @@ public class VoronoiDiagram : MonoBehaviour
 { 
     public Material forestMaterial;
     public Material cityMaterial;
-    private Material roadTexture;
+    public Material roadTexture;
+    public Material mainRoadTexture;
     private bool draw = false;
 
     private List<VoronoiElement> voronoi;
@@ -18,7 +19,6 @@ public class VoronoiDiagram : MonoBehaviour
 
     public void Setup()
     {
-        this.roadTexture = GameManager.instance.roadTexture;
         voronoi = new List<VoronoiElement>();
     }
     public void CalculateNewPoints()
@@ -78,6 +78,7 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
         Vector3 cityCenter = GameManager.instance.points[index];
+        GameManager.instance.cityCenter = cityCenter;
         //Debug.Log(cityCenter);
         Vector3 vector;
         for (int i = 0; i < voronoi.Count; ++i)
@@ -103,7 +104,15 @@ public class VoronoiDiagram : MonoBehaviour
                 }
                 else if (vector.magnitude > GameManager.instance.maxX * 0.4f)
                 {
-                    voronoi[i].type = DistrictType.ResidentialDistrict;
+                    int number = Random.Range(1, 1000);
+                    if (number % 8 != 1)
+                    {
+                        voronoi[i].type = DistrictType.ResidentialDistrict;
+                    }
+                    else
+                    {
+                        voronoi[i].type = DistrictType.Forest;
+                    }
                 }
                 else if (vector.magnitude < GameManager.instance.maxX * 0.4f)
                 {
@@ -186,7 +195,7 @@ public class VoronoiDiagram : MonoBehaviour
             }
         }
 
-        DisplayVoronoi(triangulation);
+        InitializeVoronoi(triangulation);
 
         foreach(Triangle triangle in triangulation)
         {
@@ -197,9 +206,10 @@ public class VoronoiDiagram : MonoBehaviour
         }
         CalculateCorners();
         PolarAngleSort();
-        if (GameManager.instance.cityCenter) ChooseCityCenterAndCalculateDistrictClasses();
+        ChooseCityCenterAndCalculateDistrictClasses(); 
         if (draw)
-        {
+        {   
+            DisplayDistricts();
             CreateMeshes();
         }
     }
@@ -414,7 +424,7 @@ public class VoronoiDiagram : MonoBehaviour
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
-            DrawRoad(triangle.center, triangle.center + perpendicularVector, triangle.ab);
+            InitializeRoad(triangle.center, triangle.center + perpendicularVector, triangle.ab);
         }
         if (!sharedEdges[1])
         {
@@ -457,7 +467,7 @@ public class VoronoiDiagram : MonoBehaviour
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
-            DrawRoad(triangle.center, triangle.center + perpendicularVector, triangle.ac);
+            InitializeRoad(triangle.center, triangle.center + perpendicularVector, triangle.ac);
         }
         if (!sharedEdges[2])
         {
@@ -500,7 +510,7 @@ public class VoronoiDiagram : MonoBehaviour
                 tmp = new Vector3(perpendicularVector.x * (distance / perpendicularVector.y), distance);
                 perpendicularVector = tmp;
             }
-            DrawRoad(triangle.center, triangle.center + perpendicularVector, triangle.bc);
+            InitializeRoad(triangle.center, triangle.center + perpendicularVector, triangle.bc);
         }
     }
     private void AddNeighbour(Triangle t1, Triangle t2, Edge e)
@@ -520,7 +530,7 @@ public class VoronoiDiagram : MonoBehaviour
             t1.neighbours.Add(new Neighbour(t2, e));
         }
     }
-    private void DisplayVoronoi(List<Triangle> triangulation)
+    private void InitializeVoronoi(List<Triangle> triangulation)
     {
         foreach(Triangle triangle in triangulation)
         {
@@ -589,7 +599,7 @@ public class VoronoiDiagram : MonoBehaviour
                     }
                     if (flag)
                     {
-                        DrawRoad(firstPoint, secondPoint, neighbour.edge);
+                        InitializeRoad(firstPoint, secondPoint, neighbour.edge);
                     }
                     else
                     {
@@ -610,7 +620,7 @@ public class VoronoiDiagram : MonoBehaviour
                         distanceY = triangle.center.y > 0 ? GameManager.instance.maxY - neighbour.triangle.center.y : GameManager.instance.minY - neighbour.triangle.center.y;
                         newV = new Vector3(vector.x * (distanceY / vector.y), distanceY);
                     }
-                    DrawRoad(neighbour.triangle.center + newV, neighbour.triangle.center, neighbour.edge);
+                    InitializeRoad(neighbour.triangle.center + newV, neighbour.triangle.center, neighbour.edge);
                 }
                 else if (Mathf.Abs(neighbour.triangle.center.x) > GameManager.instance.maxX || Mathf.Abs(neighbour.triangle.center.y) > GameManager.instance.maxY)
                 {
@@ -626,48 +636,100 @@ public class VoronoiDiagram : MonoBehaviour
                         distanceY = neighbour.triangle.center.y > 0 ? GameManager.instance.maxY - triangle.center.y : GameManager.instance.minY - triangle.center.y;
                         newV = new Vector3(vector.x * (distanceY / vector.y), distanceY);
                     }
-                    DrawRoad(triangle.center + newV, triangle.center, neighbour.edge);
+                    InitializeRoad(triangle.center + newV, triangle.center, neighbour.edge);
                 } 
                 else
                 {
-                    DrawRoad(triangle.center, neighbour.triangle.center, neighbour.edge);
+                    InitializeRoad(triangle.center, neighbour.triangle.center, neighbour.edge);
                 }
             }
         }
     }
-    private void DrawRoad(Vector3 a, Vector3 b, Edge edge)
+    private void InitializeRoad(Vector3 a, Vector3 b, Edge edge)
     {
+        int first = 0;
+        int second = 0;
         for (int i = 0; i < voronoi.Count; ++i)
         {
             if (voronoi[i].center == edge.first)
             {
                 voronoi[i].AddPoint(a);
                 voronoi[i].AddPoint(b);
+                first = i;
             }
             if (voronoi[i].center == edge.second)
             {
                 voronoi[i].AddPoint(a);
                 voronoi[i].AddPoint(b);
+                second = i;
             }
         }
-        if (draw)
+        //Debug.Log(first + " " + second + " " + voronoi[first].center + " " + voronoi[second].center);
+        voronoi[first].AddNeighbour(voronoi[second]);
+        voronoi[second].AddNeighbour(voronoi[first]);
+    }
+    private void DisplayDistricts()
+    {
+        foreach(VoronoiElement district in voronoi)
         {
-            GameObject road = new GameObject("Main Road");
-            road = RoadSetup(road, a, b);
+            if(district.type == DistrictType.Forest)
+            {
+                continue;
+            }
+            else if(district.type == DistrictType.CityCenter)
+            {
+                for (int i = 0; i < district.points.Count; ++i)
+                {
+                    DrawRoad(district.points[i], district.points[(i + 1) % district.points.Count], true);
+                }
+            }
+            else
+            {
+                for(int i = 0; i < district.points.Count; ++i)
+                {
+                    DrawRoad(district.points[i], district.points[(i + 1) % district.points.Count], false);
+                }
+            } 
         }
     }
-    private GameObject RoadSetup(GameObject go, Vector3 a, Vector3 b)
+    private void DrawRoad(Vector3 a, Vector3 b, bool main)
+    {
+        if (main)
+        {
+            GameObject road = new GameObject("Main Road");
+            road = RoadSetup(road, a, b, true);
+        }
+        else
+        {
+            GameObject road = new GameObject("Semi-Main Road");
+            road = RoadSetup(road, a, b, false);
+        }
+    }
+    private GameObject RoadSetup(GameObject go, Vector3 a, Vector3 b, bool main)
     {
         var line = go.AddComponent<LineRenderer>();
         line.SetPosition(0, a);
         line.SetPosition(1, b);
         
         line.sortingOrder = 1;
-        line.material = roadTexture;
+        
         line.textureMode = LineTextureMode.Tile;
-        line.startWidth = 0.05f;
-        line.endWidth = 0.05f;
-        line.sortingLayerName = "Main Road";
+        
+        if (main)
+        {   
+            line.sortingLayerName = "Main Road";
+            line.material = mainRoadTexture;
+            line.startWidth = 0.1f;
+            line.endWidth = 0.1f;
+        }
+        else
+        {
+            line.sortingLayerName = "Road";
+            line.material = roadTexture;
+            line.startWidth = 0.05f;
+            line.endWidth = 0.05f;
+        }
+        
 
         var coll = go.AddComponent<EdgeCollider2D>();
         var pts = new Vector2[2];

@@ -24,7 +24,7 @@ public class CollisionDetecter : MonoBehaviour
             {
                 continue;
             }
-            if (hits[i].name == "Main Road")
+            if (hits[i].name == "Semi-Main Road" || hits[i].name == "Main Road")
             {
                 Destroy(go);
             }

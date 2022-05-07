@@ -22,18 +22,21 @@ public class GameManager : MonoBehaviour
     public float maxY;
     public int pointsNumber = 5;
     public bool deluanay;
-    public bool cityCenter;
+    //public bool cityCenter;
     public int lloyd;
-    public Sprite pointTexture;
-    public Material roadTexture;
+    //public Sprite pointTexture;
+    //public Material roadTexture;
     public Sprite[] buildingTextures32x32 = new Sprite[9];
     public Sprite[] buildingTextures16x16 = new Sprite[8];
-    public Sprite[] buildingTextures16x32 = new Sprite[4];
+    public Sprite[] buildingTextures16x32 = new Sprite[4];  
+    public Vector3 cityCenter;
 
     public Aglomeration aglomeration;
     public DeluanayTriangulation deluanayTriangulation;
     public VoronoiDiagram voronoiDiagram;
     public CityArea cityArea;
+    public MainRoadGenerator mainRoadGenerator;
+  
 
     [HideInInspector]
     public List<Vector3> points = new List<Vector3>();
@@ -63,6 +66,9 @@ public class GameManager : MonoBehaviour
             voronoiDiagram.Setup();
             voronoiDiagram.ConstructAndDisplay(triangles, points);
             voronoiDiagram.GetDistricts();
+
+            mainRoadGenerator.GenerateMainRoads();
+
             aglomeration.CreateRoads();
             aglomeration.CreateBuildings();
         }
