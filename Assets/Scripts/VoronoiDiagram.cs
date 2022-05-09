@@ -694,15 +694,18 @@ public class VoronoiDiagram : MonoBehaviour
     }
     private void DrawRoad(Vector3 a, Vector3 b, bool main)
     {
-        if (main)
+        if (!GameManager.instance.MST)
         {
-            GameObject road = new GameObject("Main Road");
-            road = RoadSetup(road, a, b, true);
-        }
-        else
-        {
-            GameObject road = new GameObject("Semi-Main Road");
-            road = RoadSetup(road, a, b, false);
+            if (main)
+            {
+                GameObject road = new GameObject("Main Road");
+                road = RoadSetup(road, a, b, true);
+            }
+            else
+            {
+                GameObject road = new GameObject("Semi-Main Road");
+                road = RoadSetup(road, a, b, false);
+            }
         }
     }
     private GameObject RoadSetup(GameObject go, Vector3 a, Vector3 b, bool main)

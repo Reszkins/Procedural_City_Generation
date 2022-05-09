@@ -13,35 +13,15 @@ public class MainRoadGenerator : MonoBehaviour
     public void GenerateMainRoads()
     {
         districts = GameManager.instance.districts;
-        ChooseBorderDistricts();
-        CreateMainRoads();
+        if (!GameManager.instance.MST)
+        {
+            ChooseBorderDistricts();
+            CreateMainRoads();
+        }
     }
 
     private void ChooseBorderDistricts()
     {
-        Vector3 vector;
-        /*for (int i = 0; i < districts.Count; ++i)
-        {
-            if (districts[i].center != GameManager.instance.cityCenter)
-            {
-                vector = GameManager.instance.cityCenter - districts[i].center;
-                if (vector.magnitude > GameManager.instance.maxX * 0.85f)
-                {
-                    for (int j = 0; j < districts[i].neighbours.Count; ++j)
-                    {
-                        if (districts[i].neighbours[j].type == DistrictType.ResidentialDistrict)
-                        {                          
-                            if(districts[i].neighbours[j].border == false)
-                            {   
-                                districts[i].neighbours[j].border = true;
-                                borderDistricts.Add(districts[i].neighbours[j]);
-                            }                        
-                        }
-                    }
-                }
-            }
-
-        }*/
         foreach(VoronoiElement district in districts)
         {
             for(int i = 0; i < district.points.Count; ++i)
@@ -78,34 +58,6 @@ public class MainRoadGenerator : MonoBehaviour
         VoronoiElement district = borderDistricts[indexes[m]];
         bool p = false;
         int pointIndex = borderPointsIndexes[indexes[m]];
-        /*for (int i = 0; i < district.points.Count; ++i)
-        {          
-            for(int j = 0; j < district.neighbours.Count; ++j)
-            {
-                p = false;
-                if(district.neighbours[j].type != DistrictType.Forest)
-                {
-                    continue;
-                }
-                for(int l = 0; l < district.neighbours[j].points.Count; ++l)
-                {
-                    if(district.points[i] == district.neighbours[j].points[l])
-                    {
-                        p = true;
-                        pointIndex = i;
-                        break;
-                    }
-                }
-                if(p == true)
-                {
-                    break;
-                }
-            }
-            if (p == true)
-            {
-                break;
-            }
-        }*/
         float firstDistance, secondDistance, distance;
         int oldIndex = 0;
         bool stop = false;

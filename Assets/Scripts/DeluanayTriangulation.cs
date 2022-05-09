@@ -43,16 +43,26 @@ public class DeluanayTriangulation : MonoBehaviour
             CreatePoint(new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0));
         }
     }
+    public void GetPoints(List<Vector3> p)
+    {
+        points = p;
+        triangles = new List<Triangle>();
+    }
     public void Deluanay()
     {
         triangles = BowyerWatson();
-        if (deluanay)
+        //Debug.Log(GameManager.instance.deluanay + " " + triangles.Count);
+        if (GameManager.instance.deluanay)
+        {
             foreach (Triangle triangle in triangles)
             {
+                //Debug.Log("EXCUSE ME");
                 DrawTriangle(triangle);
             }
+        }
         GameManager.instance.triangles = triangles;
         GameManager.instance.points = points;
+        //Debug.Log(GameManager.instance.deluanay + " " + triangles.Count);
     }
     private void CreatePoint(Vector3 position)
     {

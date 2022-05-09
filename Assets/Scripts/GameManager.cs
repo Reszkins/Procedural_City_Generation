@@ -30,12 +30,15 @@ public class GameManager : MonoBehaviour
     public Sprite[] buildingTextures16x16 = new Sprite[8];
     public Sprite[] buildingTextures16x32 = new Sprite[4];  
     public Vector3 cityCenter;
+    public bool MST;
+    public int crossingNumber;
 
     public Aglomeration aglomeration;
     public DeluanayTriangulation deluanayTriangulation;
     public VoronoiDiagram voronoiDiagram;
     public CityArea cityArea;
     public MainRoadGenerator mainRoadGenerator;
+    public MSTRoadGenerator mstRoadGenerator;
   
 
     [HideInInspector]
@@ -67,10 +70,16 @@ public class GameManager : MonoBehaviour
             voronoiDiagram.ConstructAndDisplay(triangles, points);
             voronoiDiagram.GetDistricts();
 
-            mainRoadGenerator.GenerateMainRoads();
-
-            aglomeration.CreateRoads();
-            aglomeration.CreateBuildings();
+            if (MST)
+            {
+                mstRoadGenerator.GenerateRoads();
+            }
+            else
+            {
+                mainRoadGenerator.GenerateMainRoads();
+                aglomeration.CreateRoads();
+                aglomeration.CreateBuildings();
+            }
         }
     }
     private void CalculateLimits()

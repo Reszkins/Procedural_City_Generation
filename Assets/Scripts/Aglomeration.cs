@@ -285,8 +285,6 @@ public class Aglomeration : MonoBehaviour
     }
     private bool Sorient(Vector3 point, VoronoiElement district)
     {
-        
-        // Debug.Log("POINT: " + point + " DISTRICT CENTER: " + district.center);
         if(Orient(point, district.points[0], district.points[1]))
         {
             for(int i = 2; i < district.points.Count; ++i)
@@ -319,16 +317,6 @@ public class Aglomeration : MonoBehaviour
     }
     private bool Orient(Vector3 point, Vector3 firstPoint, Vector3 secondPoint)
     {
-        /*Debug.Log((firstPoint.x * secondPoint.y) + (secondPoint.x * point.y) + (point.x * firstPoint.y) - (point.x * secondPoint.y) -
-            (firstPoint.x * point.y) - (secondPoint.x * firstPoint.y));
-        if((firstPoint.x * secondPoint.y) + (secondPoint.x * point.y) + (point.x * firstPoint.y) - (point.x * secondPoint.y) - 
-            (firstPoint.x * point.y) - (secondPoint.x * firstPoint.y) >= 0)
-        {
-            return true;
-        }
-        return false;*/
-        //Debug.Log((point.x - firstPoint.x) * (secondPoint.y - firstPoint.y) - (point.y - firstPoint.y) * (secondPoint.x - firstPoint.x));
-        //Debug.Log("1: " + firstPoint + " 2: " + secondPoint + " P: " + point + " wynik: " + ((point.x - firstPoint.x) * (secondPoint.y - firstPoint.y) - (point.y - firstPoint.y) * (secondPoint.x - firstPoint.x)));
         if ((point.x - firstPoint.x) * (secondPoint.y - firstPoint.y) - (point.y - firstPoint.y) * (secondPoint.x - firstPoint.x)>= 0)
         {
             return true;
@@ -337,8 +325,11 @@ public class Aglomeration : MonoBehaviour
     }
     private void DrawRoad(Vector3 a, Vector3 b)
     {
-        GameObject road = new GameObject("Road");
-        road = RoadSetup(road, a, b);
+        if (!GameManager.instance.MST)
+        {
+            GameObject road = new GameObject("Road");
+            road = RoadSetup(road, a, b);
+        }
     }
     private GameObject RoadSetup(GameObject go, Vector3 a, Vector3 b)
     {
@@ -415,8 +406,11 @@ public class Aglomeration : MonoBehaviour
     }
     private void DrawBuilding(Vector3 position)
     {
-        GameObject building = new GameObject("Building");
-        building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
+        if (!GameManager.instance.MST)
+        {
+            GameObject building = new GameObject("Building");
+            building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
+        } 
     }
     private GameObject BuildingSetup(GameObject building,Vector3 position, Sprite texture)
     {
