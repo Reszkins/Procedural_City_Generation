@@ -694,6 +694,7 @@ public class VoronoiDiagram : MonoBehaviour
     }
     private void DrawRoad(Vector3 a, Vector3 b, bool main)
     {
+        main = false;
         if (!GameManager.instance.MST)
         {
             if (main)

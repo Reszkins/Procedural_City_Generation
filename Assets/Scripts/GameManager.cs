@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public Sprite[] buildingTextures16x32 = new Sprite[4];  
     public Vector3 cityCenter;
     public bool MST;
+    public bool tensor;
     public int crossingNumber;
 
     public Aglomeration aglomeration;
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
     public CityArea cityArea;
     public MainRoadGenerator mainRoadGenerator;
     public MSTRoadGenerator mstRoadGenerator;
+    public TensorFieldRoadGenerator tensorFieldRoadGenerator;
   
 
     [HideInInspector]
@@ -50,6 +52,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown("return"))
+        {
+            tensorFieldRoadGenerator.Test();
+        }
         if (Input.GetKeyDown("space"))
         {   
             CalculateLimits();
@@ -73,6 +79,10 @@ public class GameManager : MonoBehaviour
             if (MST)
             {
                 mstRoadGenerator.GenerateRoads();
+            }
+            else if (tensor)
+            {
+                //tensorFieldRoadGenerator.GenerateRoads();
             }
             else
             {

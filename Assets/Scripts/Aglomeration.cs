@@ -47,8 +47,8 @@ public class Aglomeration : MonoBehaviour
     private void CalculateAreas(float maxX, float minX, float maxY, float minY, VoronoiElement district)
     {
         //Debug.Log("siemaneczko");
-        PriorityQueue pq = new PriorityQueue();
-        pq.Add(new Area(new Vector3(maxX, maxY), new Vector3(maxX, minY), new Vector3(minX, minY), new Vector3(minX, maxY)));
+        PriorityQueue<Area> pq = new PriorityQueue<Area>();
+        pq.Add(new Area(new Vector3(maxX, maxY), new Vector3(maxX, minY), new Vector3(minX, minY), new Vector3(minX, maxY)), Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
         Area current = pq.Get();
         float maxArea = current.area;
         Line line;
@@ -91,7 +91,7 @@ public class Aglomeration : MonoBehaviour
                             {
                                 if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
-                                    pq.Add(current);
+                                    pq.Add(current, Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
                                     flag = true;
                                     add = false;
                                     break;
@@ -110,7 +110,7 @@ public class Aglomeration : MonoBehaviour
                             {
                                 if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
-                                    pq.Add(current);
+                                    pq.Add(current, Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
                                     flag = true;
                                     add = false;
                                     break;
@@ -140,7 +140,7 @@ public class Aglomeration : MonoBehaviour
                             {
                                 if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
-                                    pq.Add(current);
+                                    pq.Add(current, Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
                                     flag = true;
                                     add = false;
                                     break;
@@ -159,7 +159,7 @@ public class Aglomeration : MonoBehaviour
                             {
                                 if (Vector3.Magnitude(l.firstPoint - l.secondPoint) < 0.172f)
                                 {
-                                    pq.Add(current);
+                                    pq.Add(current, Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
                                     flag = true;
                                     add = false;
                                     break;
@@ -178,13 +178,13 @@ public class Aglomeration : MonoBehaviour
             {
                 while(toAdd.Count != 0)
                 {
-                    pq.Add(toAdd[0]);
+                    pq.Add(toAdd[0], Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
                     toAdd.RemoveAt(0);
                 }
             }
             current = pq.Get();
         }
-        pq.Add(current);
+        pq.Add(current, Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
 
         while (!pq.Empty())
         {
@@ -408,8 +408,8 @@ public class Aglomeration : MonoBehaviour
     {
         if (!GameManager.instance.MST)
         {
-            GameObject building = new GameObject("Building");
-            building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
+            //GameObject building = new GameObject("Building");
+            //building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
         } 
     }
     private GameObject BuildingSetup(GameObject building,Vector3 position, Sprite texture)

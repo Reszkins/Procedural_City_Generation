@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
-public class PriorityQueue
+public class PriorityQueue<T>
 {
-    private List<Area> pq = new List<Area>();
+    /*private List<Area> pq = new List<Area>();
     
     public void Add(Area a)
     {
@@ -20,6 +21,27 @@ public class PriorityQueue
     public bool Empty()
     {
         if(pq.Count == 0)
+        {
+            return true;
+        }
+        return false;
+    }*/
+    private List<T> pq = new List<T>();
+
+    public void Add(T obj, Comparer<T> c)
+    {
+        pq.Add(obj);
+        pq.Sort(c);
+    }
+    public T Get()
+    {
+        T obj = pq[0];
+        pq.Remove(obj);
+        return obj;
+    }
+    public bool Empty()
+    {
+        if (pq.Count == 0)
         {
             return true;
         }

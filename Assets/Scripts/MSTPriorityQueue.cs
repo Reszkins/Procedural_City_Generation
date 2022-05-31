@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MSTPriorityQueue
 {
-    private List<Distance> pq = new List<Distance>();
+   /* private List<Distance> pq = new List<Distance>();
 
     public void Add(Distance n)
     {
@@ -24,5 +24,5 @@ public class MSTPriorityQueue
             return true;
         }
         return false;
-    }
+    }*/
 }

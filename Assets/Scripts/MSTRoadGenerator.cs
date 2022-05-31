@@ -26,12 +26,12 @@ public class MSTRoadGenerator : MonoBehaviour
 
         CreateGraph();
 
-        MSTPriorityQueue pq = new MSTPriorityQueue();
+        PriorityQueue<Distance> pq = new PriorityQueue<Distance>();
         for(int i = 0; i < graph.Count; ++i)
         {
             for(int j = 0; j < graph[i].Count; ++j)
             {
-                pq.Add(new Distance((crossings[graph[i][j].index] - crossings[i]).magnitude, new Node(i, i), graph[i][j]));
+                pq.Add(new Distance((crossings[graph[i][j].index] - crossings[i]).magnitude, new Node(i, i), graph[i][j]), Comparer<Distance>.Create((x, y) => x.distance.CompareTo(y.distance)));
             }
         }
         int[] treeId = new int[crossings.Count];

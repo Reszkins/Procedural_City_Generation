@@ -124,8 +124,8 @@ public class MainRoadGenerator : MonoBehaviour
 
     private void DrawRoad(Vector3 a, Vector3 b)
     {
-        GameObject road = new GameObject("Main Road");
-        road = RoadSetup(road, a, b);
+        //GameObject road = new GameObject("Main Road");
+        //road = RoadSetup(road, a, b);
     }
     private GameObject RoadSetup(GameObject go, Vector3 a, Vector3 b)
     {
