@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
             }
             else if (tensor)
             {
-                //tensorFieldRoadGenerator.GenerateRoads();
+                tensorFieldRoadGenerator.GenerateRoads();
             }
             else
             {

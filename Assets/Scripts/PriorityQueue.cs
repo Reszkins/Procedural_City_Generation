@@ -2,34 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
+using System.Linq;
 
 public class PriorityQueue<T>
 {
-    /*private List<Area> pq = new List<Area>();
-    
-    public void Add(Area a)
-    {
-        pq.Add(a);
-        pq.Sort((x, y) => y.area.CompareTo(x.area));
-    }
-    public Area Get()
-    {
-        Area result = pq[0];
-        pq.Remove(result);
-        return result;
-    }
-    public bool Empty()
-    {
-        if(pq.Count == 0)
-        {
-            return true;
-        }
-        return false;
-    }*/
     private List<T> pq = new List<T>();
 
     public void Add(T obj, Comparer<T> c)
     {
+        if (pq.Contains(obj))
+        {
+            Debug.Log("DZIA£A");
+            return;
+        }
         pq.Add(obj);
         pq.Sort(c);
     }

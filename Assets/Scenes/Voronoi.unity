@@ -273,7 +273,7 @@ MonoBehaviour:
   - {fileID: 0}
   cityCenter: {x: 0, y: 0, z: 0}
   MST: 0
-  tensor: 0
+  tensor: 1
   crossingNumber: 300
   aglomeration: {fileID: 236220669}
   deluanayTriangulation: {fileID: 837790375}
