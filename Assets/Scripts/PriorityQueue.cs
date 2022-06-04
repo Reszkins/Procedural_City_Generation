@@ -12,7 +12,6 @@ public class PriorityQueue<T>
     {
         if (pq.Contains(obj))
         {
-            Debug.Log("DZIA£A");
             return;
         }
         pq.Add(obj);

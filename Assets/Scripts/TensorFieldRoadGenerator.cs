@@ -11,8 +11,7 @@ public class TensorFieldRoadGenerator : MonoBehaviour
     public List<Candidate> minorPoints = new List<Candidate>();
 
     private Vector3 direction;
-
-    private Vector3 center = Vector3.zero;
+    private Vector3 center;
     public void Test()
     {
         Vector3 direction = new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f));
@@ -71,35 +70,224 @@ public class TensorFieldRoadGenerator : MonoBehaviour
             Debug.Log("XDDDDDDDDDDDDDDD");
             dir = new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f));
         }
-
+        center = GameManager.instance.cityCenter;
         direction = dir;
         Debug.Log("ojæ");
-        Streamline(new Vector3(1, 1, 0));
+        RadialStreamline(new Vector3(1, 1, 0));
     }
 
-    private void Streamline(Vector3 startPoint)
+    private void RadialStreamline(Vector3 startPoint)
+    {
+        bool tracking = true; // true - major, false - minor
+
+        Comparer<Vector3> comparator = Comparer<Vector3>.Create((x, y) => Vector3.Magnitude(x - GameManager.instance.cityCenter).CompareTo(Vector3.Magnitude(y - GameManager.instance.cityCenter)));
+        PriorityQueue<Vector3> majorCandidates = new PriorityQueue<Vector3>();
+        PriorityQueue<Vector3> minorCandidates = new PriorityQueue<Vector3>();
+
+        List<Candidate> majorStreamline = new List<Candidate>();
+        List<Candidate> minorStreamline = new List<Candidate>();
+
+        //majorCandidates.Add(startPoint,comparator);
+        
+        Vector3 currentPoint = startPoint;
+        bool stop = false;
+        int licznik = 0;
+
+        while(!stop)
+        {
+            //licznik++;
+            if (tracking)
+            {
+                majorStreamline.Add(new Candidate(startPoint));
+                // one direction
+                currentPoint = startPoint;
+                bool v = true;
+                int pom = 0;
+                while (Sorient(currentPoint + TensorField(currentPoint).major))
+                {
+                    v = true;
+                    foreach (Candidate p in majorPoints)
+                    {
+                        if (Vector3.Magnitude(p.point - currentPoint + TensorField(currentPoint).major) < 0.4f)
+                        {
+                            v = false;
+                        }
+                    }
+                    if (v)
+                    {
+                        DrawRoad(currentPoint, currentPoint + TensorField(currentPoint).major, false);
+                        currentPoint += TensorField(currentPoint).major;
+                        majorStreamline.Add(new Candidate(currentPoint));
+                        minorCandidates.Add(currentPoint, comparator);
+                    }
+                    if (!v)
+                    {
+                        break;
+                    }
+                }
+                // other direction
+                currentPoint = startPoint;
+                pom = 0;
+                while (Sorient(currentPoint - TensorField(currentPoint).major))
+                {
+                    v = true;
+                    foreach (Candidate p in majorPoints)
+                    {
+                        if (Vector3.Magnitude(p.point - currentPoint - TensorField(currentPoint).major) < 0.4f)
+                        {
+                            v = false;
+                        }
+                    }
+                    if (v)
+                    {
+                        DrawRoad(currentPoint, currentPoint - TensorField(currentPoint).major, false);
+                        currentPoint -= TensorField(currentPoint).major;
+                        majorStreamline.Add(new Candidate(currentPoint));
+                        minorCandidates.Add(currentPoint, comparator);
+                    }
+                    if (!v)
+                    {
+                        break;
+                    }
+                }  
+            }
+            else
+            {
+                bool v = true;
+                minorStreamline.Add(new Candidate(startPoint));
+                // one direction
+                currentPoint = startPoint;
+                int pom = 0;
+                while (Sorient(currentPoint + TensorField(currentPoint).minor))
+                {
+                    if(currentPoint.x > center.x)
+                    {
+                        v = true;
+                        foreach(Candidate p in minorPoints)
+                        {
+                            if(Vector3.Magnitude(p.point - currentPoint + TensorField(currentPoint).minor) < 0.4f)
+                            {
+                                v= false;
+                            }
+                        }
+                        if (v)
+                        {
+                            DrawRoad(currentPoint, currentPoint + TensorField(currentPoint).minor, false);
+                            currentPoint = currentPoint + TensorField(currentPoint).minor;
+                            minorStreamline.Add(new Candidate(currentPoint));
+                            majorCandidates.Add(currentPoint, comparator);
+                        }   
+                    }
+                    else
+                    {
+                        v = true;
+                        foreach (Candidate p in minorPoints)
+                        {
+                            if (Vector3.Magnitude(p.point - currentPoint - TensorField(currentPoint).minor) < 0.4f)
+                            {
+                                v = false;
+                            }
+                        }
+                        if (v)
+                        {
+                            DrawRoad(currentPoint, currentPoint - TensorField(currentPoint).minor, false);
+                            currentPoint = currentPoint - TensorField(currentPoint).minor;
+                            minorStreamline.Add(new Candidate(currentPoint));
+                            majorCandidates.Add(currentPoint, comparator);
+                        }
+                    }
+                    if(!v)
+                    {
+                        break;
+                    }                   
+                }
+            }
+            foreach(Candidate c in majorStreamline)
+            {
+                majorPoints.Add(c);
+            }
+            foreach (Candidate c in minorStreamline)
+            {
+                minorPoints.Add(c);
+            }
+            //next point
+            bool valid = true;
+            if (tracking)
+            {
+                Vector3 candidate = Vector3.zero;
+                tracking = false;
+                do
+                {
+                    if (minorCandidates.Empty())
+                    {
+                        stop = true;
+                        break;
+                    }
+                    candidate = minorCandidates.Get();
+                    valid = true;
+                    foreach(Candidate point in minorPoints)
+                    {
+                        if(Vector3.Magnitude(candidate - point.point) < 0.7f)
+                        {   
+                            valid = false;
+                            break;
+                        }
+                    }
+                } while (valid == false);
+
+                startPoint = candidate;
+            }
+            else
+            {
+                Vector3 candidate = Vector3.zero;
+                tracking = true;
+                do
+                {
+                    if (majorCandidates.Empty())
+                    {
+                        stop = true;
+                        break;
+                    }
+                    candidate = majorCandidates.Get();
+                    valid = true;
+                    foreach (Candidate point in majorPoints)
+                    {
+                        if (Vector3.Magnitude(candidate - point.point) < 0.7f)
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                } while (valid == false);
+
+                startPoint = candidate;
+            }
+        }
+
+    }
+
+    private void GridStreamline(Vector3 startPoint)
     {
         bool tracking = true; // true - major, false - minor
         //majorPoints.Add(new Candidate(startPoint));
         Comparer<Vector3> comparator = Comparer<Vector3>.Create((x, y) => Vector3.Magnitude(x - GameManager.instance.cityCenter).CompareTo(Vector3.Magnitude(y - GameManager.instance.cityCenter)));
         PriorityQueue<Vector3> majorCandidates = new PriorityQueue<Vector3>();
         PriorityQueue<Vector3> minorCandidates = new PriorityQueue<Vector3>();
-        majorCandidates.Add(startPoint,comparator);
-        
+        majorCandidates.Add(startPoint, comparator);
+
         Vector3 currentPoint = Vector3.zero;
         bool stop = false;
         int licznik = 0;
         //Debug.Log("HALO KURWA? XD");
-        while(licznik < 3)
+        while (!stop)
         {
-            licznik++;
             //Debug.Log(stop);
             if (tracking)
             {
                 majorPoints.Add(new Candidate(startPoint));
                 // one direction
                 currentPoint = startPoint;
-                while(Sorient(currentPoint + TensorField(currentPoint).major))
+                while (Sorient(currentPoint + TensorField(currentPoint).major))
                 {
                     //Debug.Log("co tam");
                     DrawRoad(currentPoint, currentPoint + TensorField(currentPoint).major, false);
@@ -156,10 +344,10 @@ public class TensorFieldRoadGenerator : MonoBehaviour
                     }
                     candidate = minorCandidates.Get();
                     valid = true;
-                    foreach(Candidate point in minorPoints)
+                    foreach (Candidate point in minorPoints)
                     {
-                        if(Vector3.Magnitude(candidate - point.point) < 0.5f)
-                        {   
+                        if (Vector3.Magnitude(candidate - point.point) < 0.5f)
+                        {
                             //Debug.Log("XD JESTEM TU");
                             valid = false;
                             break;
@@ -210,20 +398,21 @@ public class TensorFieldRoadGenerator : MonoBehaviour
     }
     private Tensor RadialTensorField(Vector3 point)
     {
-        float t = Mathf.Atan(point.y / point.x);
-
         float x = center.x - point.x;
         float y = center.y - point.y;
+
+
+        float t = Mathf.Atan(y / x);
 
         float diag1 = y * y - x * x;
         float diag2 = -(y * y - x * x);
         float ndiag = -2 * x * y;
 
-        Debug.Log(diag1 + " " + diag2 + " " + ndiag + " point: " + point);
+        //Debug.Log(diag1 + " " + diag2 + " " + ndiag + " point: " + point);
 
         float x1, x2;
         Quadratic(1f, -(diag1 * diag2), (diag1 * diag2) - ndiag * ndiag, out x1, out x2);
-
+        //Debug.Log(x1 + " " + x2 + " t: " + t);
         Vector3 major = x1 * new Vector3(Mathf.Cos(t), Mathf.Sin(t));
         Vector3 minor = x2 * new Vector3(Mathf.Cos(t + Mathf.PI / 2), Mathf.Sin(t + Mathf.PI / 2));
 
