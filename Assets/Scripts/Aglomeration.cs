@@ -46,7 +46,6 @@ public class Aglomeration : MonoBehaviour
     }
     private void CalculateAreas(float maxX, float minX, float maxY, float minY, VoronoiElement district)
     {
-        //Debug.Log("siemaneczko");
         PriorityQueue<Area> pq = new PriorityQueue<Area>();
         pq.Add(new Area(new Vector3(maxX, maxY), new Vector3(maxX, minY), new Vector3(minX, minY), new Vector3(minX, maxY)), Comparer<Area>.Create((x, y) => y.area.CompareTo(x.area)));
         Area current = pq.Get();
@@ -59,7 +58,6 @@ public class Aglomeration : MonoBehaviour
         bool flag = false;
         while(current.area > maxArea / 5f)
         {
-            //Debug.Log("AREA: " + current.area + " max/7: " + maxArea / 5 + " maxarea: " + maxArea);
             flag = false;
             line = current.lines[Random.Range(0, 3)];
             while(line.vertical == vertical)
@@ -100,7 +98,6 @@ public class Aglomeration : MonoBehaviour
                             if (!flag)
                             {
                                 toAdd.Add(newArea);
-                                //pq.Add(newArea);
                             }       
                         }
                         else
@@ -119,7 +116,6 @@ public class Aglomeration : MonoBehaviour
                             if (!flag)
                             {
                                 toAdd.Add(newArea);
-                                //pq.Add(newArea);
                             }
                         }
                     }
@@ -149,7 +145,6 @@ public class Aglomeration : MonoBehaviour
                             if (!flag)
                             {
                                 toAdd.Add(newArea);
-                                //pq.Add(newArea);
                             }
                         }
                         else
@@ -168,7 +163,6 @@ public class Aglomeration : MonoBehaviour
                             if (!flag)
                             {
                                 toAdd.Add(newArea);
-                                //pq.Add(newArea);
                             }
                         }
                     }
@@ -196,17 +190,13 @@ public class Aglomeration : MonoBehaviour
     }
     private void CalculateLine(Area area,VoronoiElement district)
     {
-        //Debug.Log(":)");
         bool first, second;
         Vector3 cp;
-       // Debug.Log("NEW AREA  center: " + district.center);
+
         for(int i = 0; i < area.lines.Count; ++i)
         {
-            //DrawRoad(area.lines[i].firstPoint, area.lines[i].secondPoint);
-            //Debug.Log(area.lines[i].firstPoint + " " + area.lines[i].secondPoint);
             first = Sorient(area.lines[i].firstPoint,district);
             second = Sorient(area.lines[i].secondPoint,district);
-            //Debug.Log(first + " " + second);
             if(first && second)
             {
                 DrawRoad(area.lines[i].firstPoint, area.lines[i].secondPoint);
@@ -219,7 +209,6 @@ public class Aglomeration : MonoBehaviour
                     if(cp.x != 1000 && cp.y != 1000)
                     {
                         DrawRoad(area.lines[i].firstPoint, cp);
-                        //Debug.Log("posz³o1");
                     } 
                 }
             }
@@ -231,7 +220,6 @@ public class Aglomeration : MonoBehaviour
                     if (cp.x != 1000 && cp.y != 1000)
                     {
                         DrawRoad(area.lines[i].secondPoint, cp);
-                        //Debug.Log("posz³o2");
                     }
                 }
             }
@@ -241,7 +229,6 @@ public class Aglomeration : MonoBehaviour
                 if(points != null)
                 {
                     DrawRoad(points[0], points[1]);
-                    //Debug.Log("posz³o3");
                 }
             }
         }
@@ -263,7 +250,7 @@ public class Aglomeration : MonoBehaviour
                 result.Add(p + t * r);
             }
         }
-        //Debug.Log(result.Count);
+
         if(result.Count != 2)
         {
             return null;
@@ -349,7 +336,6 @@ public class Aglomeration : MonoBehaviour
     public void CreateBuildings()
     {
         buildingTextures16x16 = GameManager.instance.buildingTextures16x16;
-        Debug.Log("ILOŒÆ AREA: " + areas.Count);
         for(int i = 0; i < areas.Count; ++i)
         {
             CalculateBuildings(areas[i],areaDistrict[i]);
@@ -408,8 +394,8 @@ public class Aglomeration : MonoBehaviour
     {
         if (!GameManager.instance.MST)
         {
-            //GameObject building = new GameObject("Building");
-            //building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
+            GameObject building = new GameObject("Building");
+            building = BuildingSetup(building,position,buildingTextures16x16[Random.Range(0,buildingTextures16x16.Length-1)]);
         } 
     }
     private GameObject BuildingSetup(GameObject building,Vector3 position, Sprite texture)

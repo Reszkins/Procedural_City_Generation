@@ -43,7 +43,6 @@ public class VoronoiElement
 
     public void AddNeighbour(VoronoiElement neighbour)
     {
-        //Debug.Log(neighbour);
         neighbours.Add(neighbour);
     }
 }

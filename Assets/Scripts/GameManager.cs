@@ -22,16 +22,16 @@ public class GameManager : MonoBehaviour
     public float maxY;
     public int pointsNumber = 5;
     public bool deluanay;
-    //public bool cityCenter;
     public int lloyd;
-    //public Sprite pointTexture;
-    //public Material roadTexture;
     public Sprite[] buildingTextures32x32 = new Sprite[9];
     public Sprite[] buildingTextures16x16 = new Sprite[8];
     public Sprite[] buildingTextures16x32 = new Sprite[4];  
     public Vector3 cityCenter;
     public bool MST;
     public bool tensor;
+    public bool radial;
+    public bool grid;
+    public bool combined;
     public int crossingNumber;
 
     public Aglomeration aglomeration;
@@ -98,7 +98,5 @@ public class GameManager : MonoBehaviour
         minY = Mathf.Sqrt(pointsNumber) * -1;
         maxX = Mathf.Sqrt(pointsNumber);
         maxY = Mathf.Sqrt(pointsNumber);
-
-        Debug.Log("minX " + minX + " maxX " + maxX + " minY " + minY + " maxY " + maxY);
     }
 }

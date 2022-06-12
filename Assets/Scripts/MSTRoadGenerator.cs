@@ -20,7 +20,6 @@ public class MSTRoadGenerator : MonoBehaviour
     }
     private void CreateRoads()
     {
-        //GameManager.instance.deluanay = true;
         GameManager.instance.deluanayTriangulation.GetPoints(crossings);
         GameManager.instance.deluanayTriangulation.Deluanay();
 
@@ -187,7 +186,6 @@ public class MSTRoadGenerator : MonoBehaviour
                 }
             }
             crossings.Add(point);
-            //DisplayPoint(point);
         }
     }
     private void CreateArrayOfResidentalDistricts()

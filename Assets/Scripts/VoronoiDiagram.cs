@@ -79,7 +79,6 @@ public class VoronoiDiagram : MonoBehaviour
         }
         Vector3 cityCenter = GameManager.instance.points[index];
         GameManager.instance.cityCenter = cityCenter;
-        //Debug.Log(cityCenter);
         Vector3 vector;
         for (int i = 0; i < voronoi.Count; ++i)
         {
@@ -157,11 +156,6 @@ public class VoronoiDiagram : MonoBehaviour
     {
         draw = true;
         Construct(triangulation, points);
-        //if(GameManager.instance.cityCenter) ChooseCityCenterAndCalculateDistrictClasses();
-        /*for (int i = 0; i < voronoi.Count; ++i)
-        {
-            DrawPoint(voronoi[i]);
-        }*/
     }
     public void Construct(List<Triangle> triangulation, List<Vector3> points)
     {
@@ -304,15 +298,6 @@ public class VoronoiDiagram : MonoBehaviour
         Vector3 centerOfPoints;
         foreach (VoronoiElement voronoi in voronoi)
         {
-            /*centerOfPoints = Vector3.zero;
-            for (int i = 0; i < voronoi.points.Count; ++i)
-            {
-                centerOfPoints.x += voronoi.points[i].x;
-                centerOfPoints.y += voronoi.points[i].y;
-            }
-            centerOfPoints.x /= voronoi.points.Count;
-            centerOfPoints.y /= voronoi.points.Count;*/
-
             centerOfPoints = voronoi.center;
             
             List<float> alpha = new List<float>();
@@ -664,7 +649,6 @@ public class VoronoiDiagram : MonoBehaviour
                 second = i;
             }
         }
-        //Debug.Log(first + " " + second + " " + voronoi[first].center + " " + voronoi[second].center);
         voronoi[first].AddNeighbour(voronoi[second]);
         voronoi[second].AddNeighbour(voronoi[first]);
     }
