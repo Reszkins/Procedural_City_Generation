@@ -23,6 +23,14 @@ Large city:
 
 ![big city](https://user-images.githubusercontent.com/73691017/170682301-08c41c3c-b229-4dc2-afb4-78da4cad50cf.png)
 
+Roads generated with grid tensor field:
+
+![Grid map](https://user-images.githubusercontent.com/73691017/171997609-5d5b92cc-5e27-437e-816f-f61dfae98298.png)
+
+Rods generated with radial tensor field:
+
+![Radial działający](https://user-images.githubusercontent.com/73691017/171997624-a09ed1cd-f273-4677-8203-a758ee8998aa.png)
+
 TODO:
-- road generation using tensor field
+- road generation using multiple tensor fields
 - building generation
